@@ -1,0 +1,745 @@
+{
+  "schema_version": "1.0",
+  "engine": {
+    "name": "win_recovery_engine",
+    "version": "1.0.0",
+    "platform": "windows-x64"
+  },
+  "scan": {
+    "scan_id": "demo-quick",
+    "mode": "quick",
+    "target_scope": "drive",
+    "folder_path": null,
+    "started_at": "2026-10-05T10:49:45Z",
+    "finished_at": "2026-10-05T10:49:45Z",
+    "status": "completed",
+    "elevated": true,
+    "source_specs": [
+      "D:"
+    ],
+    "type_filter": [],
+    "options": {
+      "sector_aligned": true,
+      "unallocated_only": false,
+      "verify_headers": true,
+      "sample_dir": "E:\\RecoveryWork\\samples",
+      "sample_bytes": 2097152,
+      "max_candidates": 500000
+    }
+  },
+  "sources": [
+    {
+      "source_id": "vol-D",
+      "device_path": "\\\\.\\D:",
+      "kind": "volume",
+      "display_name": "D:\\ (Data, NTFS)",
+      "letter": "D:",
+      "volume_guid_path": null,
+      "filesystem": "NTFS",
+      "media_type": "HDD",
+      "sector_size": 512,
+      "cluster_size": 4096,
+      "total_bytes": 1000202000000,
+      "bytes_scanned": 1000202000000,
+      "partition_offset_bytes": 1048576,
+      "volume_offset_in_device": 0,
+      "physical_drive_index": 1,
+      "mft_records_scanned": 250000,
+      "deleted_entries_found": 33,
+      "candidates": 26,
+      "read_errors": 0,
+      "status": "completed",
+      "error": null,
+      "elapsed_seconds": 0.22
+    }
+  ],
+  "statistics": {
+    "total_candidates": 12,
+    "total_bytes": 168804,
+    "read_errors": 0,
+    "samples_bytes_written": 168804,
+    "by_method": {
+      "mft": 26
+    },
+    "by_extension": {
+      "pdf": 5,
+      "docx": 6,
+      "txt": 7,
+      "jpg": 8
+    }
+  },
+  "candidates": [
+    {
+      "id": "vol-D-mft-40004",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "Invoice_4411_Acme_Corporation.pdf",
+      "original_path": "D:\\Users\\Alice\\Pictures\\Holiday 2025\\Invoice_4411_Acme_Corporation.pdf",
+      "extension": "pdf",
+      "signature": "pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 1756,
+      "lba": 32,
+      "absolute_lba": 2080,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 16384,
+          "length": 1756,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": "2025-05-25T09:12:00Z",
+        "modified": "2025-10-25T17:45:00Z",
+        "mft_modified": "2026-02-25T11:03:00Z",
+        "accessed": "2026-01-25T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40004,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "match",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40004.pdf",
+      "sample_bytes": 1756
+    },
+    {
+      "id": "vol-D-mft-40010",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "Project_Proposal_Solar_Irrigation_Pilot.docx",
+      "original_path": "D:\\Users\\Alice\\Documents\\Finance\\Project_Proposal_Solar_Irrigation_Pilot.docx",
+      "extension": "docx",
+      "signature": "zip",
+      "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "size_bytes": 1235,
+      "lba": 72,
+      "absolute_lba": 2120,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 36864,
+          "length": 1235,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": "2025-01-11T09:12:00Z",
+        "modified": "2025-10-11T17:45:00Z",
+        "mft_modified": "2026-01-11T11:04:00Z",
+        "accessed": "2026-01-11T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40010,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "match",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40010.docx",
+      "sample_bytes": 1235
+    },
+    {
+      "id": "vol-D-mft-40018",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "wifi_notes.txt",
+      "original_path": "D:\\Users\\Alice\\Documents\\Finance\\wifi_notes.txt",
+      "extension": "txt",
+      "signature": null,
+      "mime_type": "text/plain",
+      "size_bytes": 105,
+      "lba": 112,
+      "absolute_lba": 2160,
+      "sector_size": 512,
+      "extents": [],
+      "fragment_count": 0,
+      "resident_data_b64": "V2ktRmkgc2V0dXAgbm90ZXMKUm91dGVyIGFkbWluIHBhc3N3b3JkIGNoYW5nZWQuIEd1ZXN0IG5ldHdvcmsgZW5hYmxlZC4gRmlybXdhcmUgdXBkYXRlZCB0byB2ZXJzaW9uIDMuMi4K",
+      "timestamps": {
+        "created": "2025-01-01T09:12:00Z",
+        "modified": "2025-10-01T17:45:00Z",
+        "mft_modified": "2026-03-01T11:04:00Z",
+        "accessed": "2026-01-01T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40018,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "unknown",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "resident_data: payload stored inside the MFT record"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40018.txt",
+      "sample_bytes": 105
+    },
+    {
+      "id": "vol-D-mft-40021",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "wifi_notes.txt",
+      "original_path": "D:\\Users\\Alice\\Pictures\\Holiday 2025\\wifi_notes.txt",
+      "extension": "txt",
+      "signature": null,
+      "mime_type": "text/plain",
+      "size_bytes": 105,
+      "lba": 144,
+      "absolute_lba": 2192,
+      "sector_size": 512,
+      "extents": [],
+      "fragment_count": 0,
+      "resident_data_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "timestamps": {
+        "created": "2025-06-04T09:12:00Z",
+        "modified": "2025-10-04T17:45:00Z",
+        "mft_modified": "2026-03-04T11:01:00Z",
+        "accessed": "2026-01-04T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40021,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "mismatch",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 1.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "header_zeroed: first sector is all zeros (likely overwritten or wiped)",
+        "resident_data: payload stored inside the MFT record"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40021.txt",
+      "sample_bytes": 105
+    },
+    {
+      "id": "vol-D-mft-40030",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "IMG_2044.JPG",
+      "original_path": "D:\\Users\\Alice\\Documents\\IMG_2044.JPG",
+      "extension": "jpg",
+      "signature": "jpg",
+      "mime_type": "image/jpeg",
+      "size_bytes": 17697,
+      "lba": 200,
+      "absolute_lba": 2248,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 102400,
+          "length": 12288,
+          "sparse": false
+        },
+        {
+          "offset": 122880,
+          "length": 5409,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 2,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": "2025-07-13T09:12:00Z",
+        "modified": "2025-10-13T17:45:00Z",
+        "mft_modified": "2026-03-13T11:04:00Z",
+        "accessed": "2026-01-13T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40030,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "match",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40030.jpg",
+      "sample_bytes": 17697
+    },
+    {
+      "id": "vol-D-mft-40036",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "IMG_2041.JPG",
+      "original_path": "D:\\Users\\Alice\\Pictures\\Holiday 2025\\IMG_2041.JPG",
+      "extension": "jpg",
+      "signature": "jpg",
+      "mime_type": "image/jpeg",
+      "size_bytes": 21949,
+      "lba": 288,
+      "absolute_lba": 2336,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 147456,
+          "length": 12288,
+          "sparse": false
+        },
+        {
+          "offset": 184320,
+          "length": 9661,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 2,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": "2025-05-20T09:12:00Z",
+        "modified": "2025-10-20T17:45:00Z",
+        "mft_modified": "2026-01-20T11:04:00Z",
+        "accessed": "2026-01-20T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40036,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "match",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40036.jpg",
+      "sample_bytes": 21949
+    },
+    {
+      "id": "vol-D-mft-40042",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "groceries.txt",
+      "original_path": "D:\\Users\\Alice\\Pictures\\Holiday 2025\\groceries.txt",
+      "extension": "txt",
+      "signature": null,
+      "mime_type": "text/plain",
+      "size_bytes": 82,
+      "lba": 392,
+      "absolute_lba": 2440,
+      "sector_size": 512,
+      "extents": [],
+      "fragment_count": 0,
+      "resident_data_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+      "timestamps": {
+        "created": "2025-08-26T09:12:00Z",
+        "modified": "2025-10-26T17:45:00Z",
+        "mft_modified": "2026-01-26T11:07:00Z",
+        "accessed": "2026-01-26T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40042,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "mismatch",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 0.25,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "header_zeroed: first sector is all zeros (likely overwritten or wiped)",
+        "resident_data: payload stored inside the MFT record"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40042.txt",
+      "sample_bytes": 82
+    },
+    {
+      "id": "vol-D-mft-40050",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "IMG_2047.JPG",
+      "original_path": "D:\\Users\\Alice\\Documents\\Finance\\IMG_2047.JPG",
+      "extension": "jpg",
+      "signature": "jpg",
+      "mime_type": "image/jpeg",
+      "size_bytes": 19544,
+      "lba": 448,
+      "absolute_lba": 2496,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 229376,
+          "length": 12288,
+          "sparse": false
+        },
+        {
+          "offset": 270336,
+          "length": 7256,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 2,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": "2025-08-26T09:12:00Z",
+        "modified": "2025-10-26T17:45:00Z",
+        "mft_modified": "2026-01-26T11:01:00Z",
+        "accessed": "2026-01-26T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40050,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "match",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40050.jpg",
+      "sample_bytes": 19544
+    },
+    {
+      "id": "vol-D-mft-40062",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "groceries.txt",
+      "original_path": "D:\\Users\\Alice\\Documents\\groceries.txt",
+      "extension": "txt",
+      "signature": null,
+      "mime_type": "text/plain",
+      "size_bytes": 82,
+      "lba": 576,
+      "absolute_lba": 2624,
+      "sector_size": 512,
+      "extents": [],
+      "fragment_count": 0,
+      "resident_data_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+      "timestamps": {
+        "created": "2025-07-09T09:12:00Z",
+        "modified": "2025-10-09T17:45:00Z",
+        "mft_modified": "2026-02-09T11:04:00Z",
+        "accessed": "2026-01-09T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40062,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "mismatch",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 1.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "header_zeroed: first sector is all zeros (likely overwritten or wiped)",
+        "resident_data: payload stored inside the MFT record"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40062.txt",
+      "sample_bytes": 82
+    },
+    {
+      "id": "vol-D-mft-40068",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "Quarterly_Financial_Report.pdf",
+      "original_path": "D:\\Users\\Alice\\Documents\\Quarterly_Financial_Report.pdf",
+      "extension": "pdf",
+      "signature": "pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 1768,
+      "lba": 624,
+      "absolute_lba": 2672,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 319488,
+          "length": 1768,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": "2025-05-27T09:12:00Z",
+        "modified": "2025-10-27T17:45:00Z",
+        "mft_modified": "2026-02-27T11:05:00Z",
+        "accessed": "2026-01-27T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40068,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "match",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40068.pdf",
+      "sample_bytes": 1768
+    },
+    {
+      "id": "vol-D-mft-40073",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "Board_Meeting_Minutes_October_2025.docx",
+      "original_path": "D:\\Projects\\Thesis\\Board_Meeting_Minutes_October_2025.docx",
+      "extension": "docx",
+      "signature": "zip",
+      "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "size_bytes": 1236,
+      "lba": 656,
+      "absolute_lba": 2704,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 335872,
+          "length": 1236,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": "2025-04-17T09:12:00Z",
+        "modified": "2025-10-17T17:45:00Z",
+        "mft_modified": "2026-02-17T11:03:00Z",
+        "accessed": "2026-01-17T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40073,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "match",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40073.docx",
+      "sample_bytes": 1236
+    },
+    {
+      "id": "vol-D-mft-40079",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "IMG_2047.JPG",
+      "original_path": "D:\\Users\\Alice\\Documents\\IMG_2047.JPG",
+      "extension": "jpg",
+      "signature": "jpg",
+      "mime_type": "image/jpeg",
+      "size_bytes": 19544,
+      "lba": 696,
+      "absolute_lba": 2744,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 356352,
+          "length": 8192,
+          "sparse": false
+        },
+        {
+          "offset": 372736,
+          "length": 8192,
+          "sparse": false
+        },
+        {
+          "offset": 405504,
+          "length": 3160,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 3,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": "2025-08-22T09:12:00Z",
+        "modified": "2025-10-22T17:45:00Z",
+        "mft_modified": "2026-02-22T11:07:00Z",
+        "accessed": "2026-01-22T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40079,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "match",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40079.jpg",
+      "sample_bytes": 19544
+    }
+  ]
+}

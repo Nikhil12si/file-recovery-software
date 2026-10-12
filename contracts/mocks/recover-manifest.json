@@ -1,0 +1,174 @@
+{
+  "schema_version": "1.0",
+  "destination": "E:\\Recovered\\2026-10-05",
+  "preserve_paths": true,
+  "items": [
+    {
+      "id": "vol-D-mft-40004",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "Invoice_4411_Acme_Corporation.pdf",
+      "original_path": "D:\\Users\\Alice\\Pictures\\Holiday 2025\\Invoice_4411_Acme_Corporation.pdf",
+      "extension": "pdf",
+      "signature": "pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 1756,
+      "lba": 32,
+      "absolute_lba": 2080,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 16384,
+          "length": 1756,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": "2025-05-25T09:12:00Z",
+        "modified": "2025-10-25T17:45:00Z",
+        "mft_modified": "2026-02-25T11:03:00Z",
+        "accessed": "2026-01-25T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40004,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "match",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40004.pdf",
+      "sample_bytes": 1756,
+      "output_name": "Invoice_4411_Acme_Corporation.pdf",
+      "relative_dir": "D_drive/Users/Alice/Documents"
+    },
+    {
+      "id": "vol-D-mft-40010",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "Project_Proposal_Solar_Irrigation_Pilot.docx",
+      "original_path": "D:\\Users\\Alice\\Documents\\Finance\\Project_Proposal_Solar_Irrigation_Pilot.docx",
+      "extension": "docx",
+      "signature": "zip",
+      "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "size_bytes": 1235,
+      "lba": 72,
+      "absolute_lba": 2120,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 36864,
+          "length": 1235,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": "2025-01-11T09:12:00Z",
+        "modified": "2025-10-11T17:45:00Z",
+        "mft_modified": "2026-01-11T11:04:00Z",
+        "accessed": "2026-01-11T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40010,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "match",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40010.docx",
+      "sample_bytes": 1235,
+      "output_name": "Project_Proposal_Solar_Irrigation_Pilot.docx",
+      "relative_dir": "D_drive/Users/Alice/Documents"
+    },
+    {
+      "id": "vol-D-mft-40018",
+      "source_id": "vol-D",
+      "source_device": "\\\\.\\D:",
+      "source_kind": "volume",
+      "method": "mft",
+      "file_name": "wifi_notes.txt",
+      "original_path": "D:\\Users\\Alice\\Documents\\Finance\\wifi_notes.txt",
+      "extension": "txt",
+      "signature": null,
+      "mime_type": "text/plain",
+      "size_bytes": 105,
+      "lba": 112,
+      "absolute_lba": 2160,
+      "sector_size": 512,
+      "extents": [],
+      "fragment_count": 0,
+      "resident_data_b64": "V2ktRmkgc2V0dXAgbm90ZXMKUm91dGVyIGFkbWluIHBhc3N3b3JkIGNoYW5nZWQuIEd1ZXN0IG5ldHdvcmsgZW5hYmxlZC4gRmlybXdhcmUgdXBkYXRlZCB0byB2ZXJzaW9uIDMuMi4K",
+      "timestamps": {
+        "created": "2025-01-01T09:12:00Z",
+        "modified": "2025-10-01T17:45:00Z",
+        "mft_modified": "2026-03-01T11:04:00Z",
+        "accessed": "2026-01-01T08:00:00Z"
+      },
+      "mft": {
+        "record_number": 40018,
+        "sequence": 3,
+        "parent_record": 1234,
+        "record_flags": 0,
+        "file_attributes": 32,
+        "is_compressed": false,
+        "is_encrypted": false,
+        "is_sparse": false,
+        "fixup_error": false
+      },
+      "integrity": {
+        "header_check": "unknown",
+        "footer_found": null,
+        "size_estimated": false,
+        "size_source": "metadata",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "resident_data: payload stored inside the MFT record"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\vol-D-mft-40018.txt",
+      "sample_bytes": 105,
+      "output_name": "wifi_notes.txt",
+      "relative_dir": "D_drive/Users/Alice/Documents"
+    }
+  ]
+}

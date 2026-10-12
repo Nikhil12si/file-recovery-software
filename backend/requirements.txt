@@ -1,0 +1,20 @@
+# Track B - recovery service (Python 3.10+)
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.27
+pydantic>=2.5
+python-multipart>=0.0.9        # candidates.json upload (/api/scans/import)
+PyJWT>=2.8
+bcrypt>=4.1
+psycopg[binary]>=3.1           # PostgreSQL driver (DATABASE_URL=postgresql://...)
+psycopg-pool>=3.2
+Pillow>=10.2                   # thumbnails + image verification
+PyMuPDF>=1.23                  # PDF text, metadata and first-page thumbnails
+pypdf>=4.0                     # pure-python PDF fallback
+yake>=0.4.8                    # unsupervised keyword extraction (TF-IDF fallback built in)
+reportlab>=4.0                 # PDF reports
+
+# development / tests
+pytest>=8.0
+httpx>=0.27                    # FastAPI TestClient
+jsonschema>=4.21               # contract validation (contracts/validate_contracts.py)
+referencing>=0.31

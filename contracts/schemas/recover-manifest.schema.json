@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frs.local/contracts/recover-manifest.schema.json",
+  "title": "Recover manifest — Track B -> Track A (`win_recovery_engine recover --manifest <file>`)",
+  "description": "Items are candidate objects copied from candidates.json (extra keys are ignored) plus output naming fields chosen by the analysis layer.",
+  "type": "object",
+  "required": ["schema_version", "destination", "items"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "destination": { "type": "string", "description": "Absolute directory on a volume that is NOT being recovered from" },
+    "preserve_paths": { "type": "boolean", "default": true },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "source_device", "source_kind", "size_bytes", "extents"],
+        "properties": {
+          "id": { "type": "string" },
+          "source_device": { "type": "string" },
+          "source_kind": { "enum": ["volume", "physical", "image"] },
+          "size_bytes": { "type": "integer", "minimum": 0 },
+          "extension": { "type": "string" },
+          "extents": { "type": "array", "items": { "$ref": "candidates.schema.json#/$defs/extent" } },
+          "resident_data_b64": { "type": ["string", "null"] },
+          "output_name": { "type": "string", "description": "File name to write; sanitised by the engine; collisions get ' (n)' suffixes" },
+          "relative_dir": { "type": "string", "description": "Sub-directory below destination ('/' or '\\\\' separated, '..' is stripped)" }
+        }
+      }
+    }
+  }
+}

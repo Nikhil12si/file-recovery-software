@@ -1,0 +1,78 @@
+{
+  "id": "1517bd7f-402d-4952-8a07-1fdf27044bdc",
+  "scan_id": "1a5b09ff-830a-4009-953f-cb382e198cd7",
+  "candidate_id": "vol-D-mft-40095",
+  "method": "mft",
+  "file_name": "IMG_2040.JPG",
+  "suggested_name": "Photo_2025-07-07_NIKON_D3500.jpg",
+  "display_name": "IMG_2040.JPG",
+  "original_path": "D:\\Projects\\Thesis\\IMG_2040.JPG",
+  "extension": "jpg",
+  "mime_type": "image/jpeg",
+  "size_bytes": 21485,
+  "confidence": "high",
+  "confidence_score": 100,
+  "confidence_reasons": [
+    "File signature intact",
+    "All clusters still free - not overwritten",
+    "3 fragments (locations known from MFT data runs)",
+    "Content verified: JPEG 640x427 decodes completely"
+  ],
+  "cluster_id": "1a5b09ff-830a-4009-953f-cb382e198cd7:c1",
+  "lba": 616,
+  "absolute_lba": 2664,
+  "fragment_count": 3,
+  "timestamps": {
+    "created": "2025-06-18T09:12:00Z",
+    "modified": "2025-10-18T17:45:00Z",
+    "mft_modified": "2026-01-18T11:09:00Z",
+    "accessed": "2026-01-18T08:00:00Z"
+  },
+  "keywords": [],
+  "has_thumbnail": true,
+  "preview_kind": "image",
+  "restored": false,
+  "restored_path": null,
+  "source_id": "vol-D",
+  "sha256": null,
+  "integrity": {
+    "header_check": "match",
+    "footer_found": null,
+    "size_estimated": false,
+    "size_source": "metadata",
+    "truncated": false,
+    "allocated_ratio": 0.0,
+    "path_orphaned": false
+  },
+  "extents": [
+    {
+      "offset": 315392,
+      "length": 8192,
+      "sparse": false
+    },
+    {
+      "offset": 344064,
+      "length": 8192,
+      "sparse": false
+    },
+    {
+      "offset": 360448,
+      "length": 5101,
+      "sparse": false
+    }
+  ],
+  "notes": [],
+  "mft": {
+    "record_number": 40095,
+    "sequence": 3,
+    "parent_record": 1234,
+    "record_flags": 0,
+    "file_attributes": 32,
+    "is_compressed": false,
+    "is_encrypted": false,
+    "is_sparse": false,
+    "fixup_error": false
+  },
+  "partition_hint": null,
+  "source_device": "\\\\.\\D:"
+}

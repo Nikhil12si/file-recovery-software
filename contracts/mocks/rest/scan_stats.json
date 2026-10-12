@@ -1,0 +1,17 @@
+{
+  "by_extension": {
+    "jpg": 9,
+    "txt": 5,
+    "pdf": 3,
+    "png": 2
+  },
+  "by_confidence": {
+    "high": 16,
+    "low": 3
+  },
+  "by_method": {
+    "mft": 19
+  },
+  "total_files": 19,
+  "total_bytes": 188934
+}

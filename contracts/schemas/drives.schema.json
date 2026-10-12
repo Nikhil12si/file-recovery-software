@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frs.local/contracts/drives.schema.json",
+  "title": "Drive inventory (`win_recovery_engine list-drives`) and guard results",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "engine_version", "elevation", "physical_drives", "volumes"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "generated_at": { "type": "string" },
+    "engine_version": { "type": "string" },
+    "elevation": { "$ref": "#/$defs/elevation" },
+    "physical_drives": { "type": "array", "items": { "$ref": "#/$defs/physical_drive" } },
+    "volumes": { "type": "array", "items": { "$ref": "#/$defs/volume" } }
+  },
+  "$defs": {
+    "elevation": {
+      "type": "object",
+      "required": ["elevated", "elevation_type", "in_administrators_group", "error"],
+      "properties": {
+        "elevated": { "type": "boolean" },
+        "elevation_type": { "enum": ["full", "limited", "default", "unknown"] },
+        "in_administrators_group": { "type": "boolean" },
+        "error": { "type": ["string", "null"] }
+      }
+    },
+    "partition": {
+      "type": "object",
+      "required": ["number", "offset_bytes", "length_bytes", "style", "type_label", "mounted_letter", "source_spec"],
+      "properties": {
+        "number": { "type": "integer" },
+        "offset_bytes": { "type": "integer" },
+        "length_bytes": { "type": "integer" },
+        "style": { "enum": ["MBR", "GPT", "RAW"] },
+        "type_label": { "type": "string" },
+        "mounted_letter": { "type": ["string", "null"] },
+        "source_spec": { "type": "string", "examples": ["\\\\.\\PhysicalDrive1@p2"] }
+      }
+    },
+    "physical_drive": {
+      "type": "object",
+      "required": ["index", "device_path", "model", "serial", "bus_type", "media_type", "removable", "size_bytes", "bytes_per_sector",
+                   "physical_bytes_per_sector", "total_sectors", "partition_style", "accessible", "error", "partitions"],
+      "properties": {
+        "index": { "type": "integer" },
+        "device_path": { "type": "string" },
+        "model": { "type": "string" },
+        "serial": { "type": "string" },
+        "bus_type": { "type": "string" },
+        "media_type": { "enum": ["HDD", "SSD", "Unknown"] },
+        "removable": { "type": "boolean" },
+        "size_bytes": { "type": "integer" },
+        "bytes_per_sector": { "type": "integer" },
+        "physical_bytes_per_sector": { "type": "integer" },
+        "total_sectors": { "type": "integer" },
+        "partition_style": { "type": "string" },
+        "accessible": { "type": "boolean" },
+        "error": { "type": ["string", "null"] },
+        "partitions": { "type": "array", "items": { "$ref": "#/$defs/partition" } }
+      }
+    },
+    "volume": {
+      "type": "object",
+      "required": ["letter", "root_path", "device_path", "volume_guid_path", "nt_device_name", "label", "filesystem", "drive_type",
+                   "total_bytes", "free_bytes", "bytes_per_sector", "cluster_size", "total_sectors", "physical_drive_index",
+                   "partition_offset_bytes", "is_system_volume", "accessible", "error", "source_spec"],
+      "properties": {
+        "letter": { "type": "string" },
+        "root_path": { "type": "string" },
+        "device_path": { "type": "string" },
+        "volume_guid_path": { "type": "string" },
+        "nt_device_name": { "type": "string" },
+        "label": { "type": "string" },
+        "filesystem": { "type": "string" },
+        "drive_type": { "enum": ["fixed", "removable"] },
+        "total_bytes": { "type": "integer" },
+        "free_bytes": { "type": "integer" },
+        "bytes_per_sector": { "type": "integer" },
+        "cluster_size": { "type": "integer" },
+        "total_sectors": { "type": "integer" },
+        "physical_drive_index": { "type": "integer" },
+        "partition_offset_bytes": { "type": "integer" },
+        "is_system_volume": { "type": "boolean" },
+        "accessible": { "type": "boolean" },
+        "error": { "type": ["string", "null"] },
+        "source_spec": { "type": "string" }
+      }
+    },
+    "destination_check": {
+      "type": "object",
+      "required": ["safe", "reason_code", "destination", "destination_volume_root", "destination_volume_guid", "destination_physical_drives",
+                   "free_bytes", "required_bytes", "conflicts", "warnings"],
+      "properties": {
+        "safe": { "type": "boolean" },
+        "reason_code": { "enum": ["OK", "SAME_VOLUME", "SAME_PHYSICAL_DISK", "INSUFFICIENT_SPACE", "INVALID_PATH", "NOT_FOUND"] },
+        "destination": { "type": "string" },
+        "destination_volume_root": { "type": ["string", "null"] },
+        "destination_volume_guid": { "type": ["string", "null"] },
+        "destination_physical_drives": { "type": "array", "items": { "type": "integer" } },
+        "free_bytes": { "type": "integer" },
+        "required_bytes": { "type": "integer" },
+        "conflicts": { "type": "array", "items": { "type": "string" } },
+        "warnings": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

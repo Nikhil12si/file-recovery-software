@@ -1,0 +1,14 @@
+{
+  "status": "ok",
+  "version": "1.0.0",
+  "engine": {
+    "available": true,
+    "mock": true,
+    "path": null,
+    "version": "1.0.0-mock"
+  },
+  "database": {
+    "ok": true,
+    "dialect": "sqlite"
+  }
+}

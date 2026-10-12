@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frs.local/contracts/engine-events.schema.json",
+  "title": "Engine NDJSON event stream (stdout of `scan` and `recover`)",
+  "description": "Each stdout line is exactly one JSON object matching one of these event shapes. Consumers must ignore unknown event types and unknown keys (forward compatibility).",
+  "oneOf": [
+    { "$ref": "#/$defs/scan_started" },
+    { "$ref": "#/$defs/progress" },
+    { "$ref": "#/$defs/log" },
+    { "$ref": "#/$defs/error" },
+    { "$ref": "#/$defs/candidate" },
+    { "$ref": "#/$defs/source_done" },
+    { "$ref": "#/$defs/destination_check" },
+    { "$ref": "#/$defs/restore_item" },
+    { "$ref": "#/$defs/done" }
+  ],
+  "$defs": {
+    "scan_started": {
+      "type": "object",
+      "required": ["event", "ts", "scan_id", "mode", "target_scope", "elevated", "sources"],
+      "properties": {
+        "event": { "const": "scan_started" },
+        "ts": { "type": "string" },
+        "scan_id": { "type": "string" },
+        "mode": { "enum": ["quick", "deep"] },
+        "target_scope": { "enum": ["all", "drive", "folder"] },
+        "elevated": { "type": "boolean" },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["source_id", "device_path", "kind", "display_name", "media_type"],
+            "properties": {
+              "source_id": { "type": "string" }, "device_path": { "type": "string" }, "kind": { "type": "string" },
+              "display_name": { "type": "string" }, "media_type": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "progress": {
+      "type": "object",
+      "required": ["event", "ts", "phase", "bytes_done", "bytes_total", "percent"],
+      "properties": {
+        "event": { "const": "progress" },
+        "ts": { "type": "string" },
+        "scan_id": { "type": "string" },
+        "source_id": { "type": "string" },
+        "source_index": { "type": "integer" },
+        "source_count": { "type": "integer" },
+        "phase": { "enum": ["mft", "verify", "fat_directories", "carve", "restore"] },
+        "unit": { "enum": ["bytes", "records", "items", "directories"], "description": "Unit of bytes_done/bytes_total (name kept for compatibility)" },
+        "bytes_done": { "type": "integer" },
+        "bytes_total": { "type": "integer" },
+        "percent": { "type": "number", "description": "Progress of the current phase of the current source" },
+        "overall_percent": { "type": "number", "description": "Progress across all sources" },
+        "candidates_found": { "type": "integer" },
+        "rate_mb_s": { "type": "number" },
+        "eta_seconds": { "type": "number" },
+        "read_errors": { "type": "integer" },
+        "items_done": { "type": "integer" },
+        "items_total": { "type": "integer" }
+      }
+    },
+    "log": {
+      "type": "object",
+      "required": ["event", "ts", "level", "message"],
+      "properties": {
+        "event": { "const": "log" },
+        "ts": { "type": "string" },
+        "level": { "enum": ["info", "warning", "error"] },
+        "message": { "type": "string" },
+        "source_id": { "type": "string" }
+      }
+    },
+    "error": {
+      "type": "object",
+      "required": ["event", "ts", "code", "message", "fatal"],
+      "properties": {
+        "event": { "const": "error" },
+        "ts": { "type": "string" },
+        "code": {
+          "enum": ["USAGE", "NOT_ELEVATED", "SOURCE_NOT_FOUND", "NO_SOURCES", "NON_HDD_SOURCE", "UNSAFE_DESTINATION",
+                   "DESTINATION_CREATE_FAILED", "BAD_MANIFEST", "OUTPUT_WRITE_FAILED", "INTERNAL"]
+        },
+        "message": { "type": "string" },
+        "fatal": { "type": "boolean" }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "required": ["event", "candidate"],
+      "description": "Only emitted with --stream-candidates",
+      "properties": {
+        "event": { "const": "candidate" },
+        "candidate": { "$ref": "candidates.schema.json#/$defs/candidate" }
+      }
+    },
+    "source_done": {
+      "type": "object",
+      "required": ["event", "ts", "source_id", "status", "candidates", "read_errors", "elapsed_seconds"],
+      "properties": {
+        "event": { "const": "source_done" },
+        "ts": { "type": "string" },
+        "source_id": { "type": "string" },
+        "status": { "enum": ["completed", "cancelled", "failed", "unsupported"] },
+        "error": { "type": ["string", "null"] },
+        "candidates": { "type": "integer" },
+        "read_errors": { "type": "integer" },
+        "elapsed_seconds": { "type": "number" }
+      }
+    },
+    "destination_check": {
+      "type": "object",
+      "required": ["event", "result"],
+      "properties": {
+        "event": { "const": "destination_check" },
+        "result": { "$ref": "drives.schema.json#/$defs/destination_check" }
+      }
+    },
+    "restore_item": {
+      "type": "object",
+      "required": ["event", "ts", "id", "status", "output_path", "bytes_written", "read_errors", "error"],
+      "properties": {
+        "event": { "const": "restore_item" },
+        "ts": { "type": "string" },
+        "id": { "type": "string", "description": "candidate id from the manifest" },
+        "status": { "enum": ["ok", "partial", "failed"] },
+        "output_path": { "type": ["string", "null"] },
+        "bytes_written": { "type": "integer" },
+        "read_errors": { "type": "integer" },
+        "error": { "type": ["string", "null"] }
+      }
+    },
+    "done": {
+      "type": "object",
+      "required": ["event", "ts", "command", "status"],
+      "properties": {
+        "event": { "const": "done" },
+        "ts": { "type": "string" },
+        "command": { "enum": ["scan", "recover"] },
+        "scan_id": { "type": "string" },
+        "status": { "enum": ["completed", "partial", "cancelled", "failed"] },
+        "candidates_file": { "type": "string" },
+        "candidates": { "type": "integer" },
+        "elapsed_seconds": { "type": "number" },
+        "restored": { "type": "integer" },
+        "failed": { "type": "integer" },
+        "bytes_written": { "type": "integer" },
+        "destination": { "type": "string" }
+      }
+    }
+  }
+}

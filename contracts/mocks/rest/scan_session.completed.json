@@ -1,0 +1,60 @@
+{
+  "id": "1a5b09ff-830a-4009-953f-cb382e198cd7",
+  "label": "Accidental delete - D: (Quick) 2026-10-05 10:49",
+  "mode": "quick",
+  "target_scope": "drive",
+  "sources": [
+    "D:"
+  ],
+  "folder_path": null,
+  "scenario": "accidental_delete",
+  "file_types": [],
+  "status": "completed",
+  "progress": {
+    "phase": "done",
+    "percent": 100.0,
+    "overall_percent": 100.0,
+    "bytes_done": 38,
+    "bytes_total": 38,
+    "unit": "items",
+    "rate_mb_s": 0.0,
+    "eta_seconds": 0,
+    "candidates_found": 19,
+    "source_index": 0,
+    "source_count": 1,
+    "current_source": "vol-D",
+    "read_errors": 0,
+    "message": "19 files found (16 high confidence)",
+    "updated_at": "2026-10-05T10:49:46Z",
+    "log": [
+      {
+        "ts": "2026-10-05T10:49:46Z",
+        "level": "info",
+        "message": "Scanning D:\\ (Data, NTFS)"
+      },
+      {
+        "ts": "2026-10-05T10:49:46Z",
+        "level": "info",
+        "message": "vol-D: completed (19 candidates)"
+      },
+      {
+        "ts": "2026-10-05T10:49:46Z",
+        "level": "info",
+        "message": "Engine finished: completed - 19 candidates"
+      }
+    ]
+  },
+  "totals": {
+    "files": 19,
+    "bytes": 188934,
+    "high": 16,
+    "medium": 0,
+    "low": 3,
+    "clusters": 1
+  },
+  "health_warnings": [],
+  "error": null,
+  "created_at": "2026-10-05T10:49:46Z",
+  "started_at": "2026-10-05T10:49:46Z",
+  "finished_at": "2026-10-05T10:49:46Z"
+}

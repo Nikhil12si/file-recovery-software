@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://frs.local/contracts/rest-api.schema.json",
+  "title": "REST API contract — Track B (FastAPI) <-> Track C (Next.js)",
+  "description": "All endpoints are under /api, exchange JSON (UTF-8) and, except /api/health and /api/auth/{register,login}, require `Authorization: Bearer <JWT>`. Errors use HTTP status codes with body {\"detail\": string, \"code\": string}. The route table lives in contracts/README.md; FastAPI also serves the generated OpenAPI document at /api/openapi.json.",
+  "$defs": {
+    "error": {
+      "type": "object",
+      "required": ["detail"],
+      "properties": { "detail": {}, "code": { "type": "string" } }
+    },
+    "page": {
+      "type": "object",
+      "required": ["items", "page", "page_size", "total", "total_pages"],
+      "properties": {
+        "items": { "type": "array" },
+        "page": { "type": "integer", "minimum": 1 },
+        "page_size": { "type": "integer", "minimum": 1, "maximum": 500 },
+        "total": { "type": "integer", "minimum": 0 },
+        "total_pages": { "type": "integer", "minimum": 0 }
+      }
+    },
+
+    "register_request": {
+      "type": "object", "required": ["email", "password"],
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "password": { "type": "string", "minLength": 8, "maxLength": 128 },
+        "full_name": { "type": "string", "maxLength": 120 }
+      }
+    },
+    "login_request": {
+      "type": "object", "required": ["email", "password"],
+      "properties": { "email": { "type": "string" }, "password": { "type": "string" } }
+    },
+    "user": {
+      "type": "object",
+      "required": ["id", "email", "full_name", "role", "created_at", "last_login_at"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "email": { "type": "string" },
+        "full_name": { "type": ["string", "null"] },
+        "role": { "enum": ["admin", "operator", "viewer"] },
+        "created_at": { "type": "string" },
+        "last_login_at": { "type": ["string", "null"] }
+      }
+    },
+    "auth_response": {
+      "type": "object",
+      "required": ["access_token", "token_type", "expires_at", "user"],
+      "properties": {
+        "access_token": { "type": "string" },
+        "token_type": { "const": "bearer" },
+        "expires_at": { "type": "string" },
+        "user": { "$ref": "#/$defs/user" }
+      }
+    },
+
+    "health": {
+      "type": "object",
+      "required": ["status", "version", "engine", "database"],
+      "properties": {
+        "status": { "enum": ["ok", "degraded"] },
+        "version": { "type": "string" },
+        "engine": {
+          "type": "object", "required": ["available", "mock", "path", "version"],
+          "properties": { "available": { "type": "boolean" }, "mock": { "type": "boolean" }, "path": { "type": ["string", "null"] }, "version": { "type": ["string", "null"] } }
+        },
+        "database": {
+          "type": "object", "required": ["ok", "dialect"],
+          "properties": { "ok": { "type": "boolean" }, "dialect": { "enum": ["postgresql", "sqlite"] } }
+        }
+      }
+    },
+    "system_status": {
+      "type": "object",
+      "required": ["platform", "elevated", "elevation_type", "engine_available", "mock_mode", "warnings"],
+      "properties": {
+        "platform": { "type": "string" },
+        "elevated": { "type": "boolean" },
+        "elevation_type": { "type": "string" },
+        "engine_available": { "type": "boolean" },
+        "mock_mode": { "type": "boolean" },
+        "warnings": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "validate_destination_request": {
+      "type": "object", "required": ["destination", "sources"],
+      "properties": {
+        "destination": { "type": "string" },
+        "sources": { "type": "array", "items": { "type": "string" } },
+        "required_bytes": { "type": "integer", "minimum": 0 }
+      }
+    },
+
+    "scan_create_request": {
+      "type": "object",
+      "required": ["mode", "target_scope"],
+      "properties": {
+        "label": { "type": "string", "maxLength": 120 },
+        "mode": { "enum": ["quick", "deep"] },
+        "target_scope": { "enum": ["all", "drive", "folder"] },
+        "sources": { "type": "array", "items": { "type": "string" }, "description": "Engine source specs: 'D:', '\\\\.\\PhysicalDrive1', '\\\\.\\PhysicalDrive1@p2'" },
+        "folder_path": { "type": ["string", "null"] },
+        "scenario": { "enum": ["accidental_delete", "formatted_drive", "corrupted_partition", "custom"] },
+        "file_types": { "type": "array", "items": { "type": "string" } },
+        "allow_non_hdd": { "type": "boolean", "default": false },
+        "unallocated_only": { "type": "boolean", "default": false }
+      }
+    },
+    "scan_progress": {
+      "type": "object",
+      "required": ["phase", "percent", "overall_percent", "bytes_done", "bytes_total", "unit", "rate_mb_s", "eta_seconds",
+                   "candidates_found", "source_index", "source_count", "current_source", "read_errors", "message", "updated_at"],
+      "properties": {
+        "phase": { "enum": ["queued", "starting", "mft", "verify", "fat_directories", "carve", "analysis", "done"] },
+        "percent": { "type": "number" },
+        "overall_percent": { "type": "number" },
+        "bytes_done": { "type": "integer" },
+        "bytes_total": { "type": "integer" },
+        "unit": { "type": "string" },
+        "rate_mb_s": { "type": "number" },
+        "eta_seconds": { "type": "number" },
+        "candidates_found": { "type": "integer" },
+        "source_index": { "type": "integer" },
+        "source_count": { "type": "integer" },
+        "current_source": { "type": ["string", "null"] },
+        "read_errors": { "type": "integer" },
+        "message": { "type": ["string", "null"] },
+        "updated_at": { "type": "string" },
+        "log": { "type": "array", "items": { "type": "object", "properties": { "ts": {}, "level": {}, "message": {} } } }
+      }
+    },
+    "scan_session": {
+      "type": "object",
+      "required": ["id", "label", "mode", "target_scope", "sources", "folder_path", "scenario", "file_types", "status",
+                   "progress", "totals", "error", "created_at", "started_at", "finished_at"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "label": { "type": "string" },
+        "mode": { "enum": ["quick", "deep"] },
+        "target_scope": { "enum": ["all", "drive", "folder"] },
+        "sources": { "type": "array", "items": { "type": "string" } },
+        "folder_path": { "type": ["string", "null"] },
+        "scenario": { "type": "string" },
+        "file_types": { "type": "array", "items": { "type": "string" } },
+        "status": { "enum": ["queued", "running", "analyzing", "completed", "partial", "failed", "cancelled"] },
+        "progress": { "$ref": "#/$defs/scan_progress" },
+        "totals": {
+          "type": "object",
+          "required": ["files", "bytes", "high", "medium", "low", "clusters"],
+          "properties": {
+            "files": { "type": "integer" }, "bytes": { "type": "integer" }, "high": { "type": "integer" },
+            "medium": { "type": "integer" }, "low": { "type": "integer" }, "clusters": { "type": "integer" }
+          }
+        },
+        "health_warnings": { "type": "array", "items": { "type": "string" } },
+        "error": { "type": ["string", "null"] },
+        "created_at": { "type": "string" },
+        "started_at": { "type": ["string", "null"] },
+        "finished_at": { "type": ["string", "null"] }
+      }
+    },
+    "recovered_file": {
+      "type": "object",
+      "required": ["id", "scan_id", "candidate_id", "method", "file_name", "suggested_name", "display_name", "original_path",
+                   "extension", "mime_type", "size_bytes", "confidence", "confidence_score", "confidence_reasons", "cluster_id",
+                   "lba", "absolute_lba", "fragment_count", "timestamps", "keywords", "has_thumbnail", "preview_kind",
+                   "restored", "restored_path", "source_id"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "scan_id": { "type": "string", "format": "uuid" },
+        "candidate_id": { "type": "string" },
+        "method": { "enum": ["mft", "fat", "carve"] },
+        "file_name": { "type": ["string", "null"] },
+        "suggested_name": { "type": ["string", "null"], "description": "Semantic auto-name (e.g. Financial_Report_2026.pdf)" },
+        "display_name": { "type": "string", "description": "file_name || suggested_name || 'carved_<offset>.<ext>'" },
+        "original_path": { "type": ["string", "null"] },
+        "extension": { "type": "string" },
+        "mime_type": { "type": "string" },
+        "size_bytes": { "type": "integer" },
+        "confidence": { "enum": ["high", "medium", "low"] },
+        "confidence_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "confidence_reasons": { "type": "array", "items": { "type": "string" } },
+        "cluster_id": { "type": ["string", "null"] },
+        "lba": { "type": "integer" },
+        "absolute_lba": { "type": "integer" },
+        "fragment_count": { "type": "integer" },
+        "timestamps": { "type": "object" },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "has_thumbnail": { "type": "boolean" },
+        "preview_kind": { "enum": ["image", "text", "none"] },
+        "restored": { "type": "boolean" },
+        "restored_path": { "type": ["string", "null"] },
+        "source_id": { "type": "string" }
+      }
+    },
+    "file_preview": {
+      "type": "object",
+      "required": ["file_id", "kind", "thumbnail_url", "text_excerpt", "keywords", "message"],
+      "properties": {
+        "file_id": { "type": "string" },
+        "kind": { "enum": ["image", "text", "none"] },
+        "thumbnail_url": { "type": ["string", "null"] },
+        "text_excerpt": { "type": ["string", "null"] },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "message": { "type": ["string", "null"] }
+      }
+    },
+    "deletion_cluster": {
+      "type": "object",
+      "required": ["id", "scan_id", "label", "file_count", "total_bytes", "lba_start", "lba_end", "dominant_extension", "time_start", "time_end"],
+      "properties": {
+        "id": { "type": "string" },
+        "scan_id": { "type": "string" },
+        "label": { "type": "string" },
+        "file_count": { "type": "integer" },
+        "total_bytes": { "type": "integer" },
+        "lba_start": { "type": "integer" },
+        "lba_end": { "type": "integer" },
+        "dominant_extension": { "type": "string" },
+        "time_start": { "type": ["string", "null"] },
+        "time_end": { "type": ["string", "null"] }
+      }
+    },
+    "scan_stats": {
+      "type": "object",
+      "required": ["by_extension", "by_confidence", "by_method", "total_files", "total_bytes"],
+      "properties": {
+        "by_extension": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "by_confidence": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "by_method": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "total_files": { "type": "integer" },
+        "total_bytes": { "type": "integer" }
+      }
+    },
+    "restore_request": {
+      "type": "object",
+      "required": ["file_ids", "destination"],
+      "properties": {
+        "file_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "destination": { "type": "string" },
+        "use_smart_names": { "type": "boolean", "default": true },
+        "preserve_paths": { "type": "boolean", "default": true }
+      }
+    },
+    "restore_job": {
+      "type": "object",
+      "required": ["id", "scan_id", "status", "destination", "total_files", "restored_files", "failed_files", "bytes_written",
+                   "percent", "items", "error", "created_at", "finished_at"],
+      "properties": {
+        "id": { "type": "string" },
+        "scan_id": { "type": "string" },
+        "status": { "enum": ["queued", "running", "completed", "partial", "failed", "cancelled"] },
+        "destination": { "type": "string" },
+        "total_files": { "type": "integer" },
+        "restored_files": { "type": "integer" },
+        "failed_files": { "type": "integer" },
+        "bytes_written": { "type": "integer" },
+        "percent": { "type": "number" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["file_id", "status", "output_path", "bytes_written", "sha256", "error"],
+            "properties": {
+              "file_id": { "type": "string" },
+              "status": { "enum": ["pending", "ok", "partial", "failed"] },
+              "output_path": { "type": ["string", "null"] },
+              "bytes_written": { "type": "integer" },
+              "sha256": { "type": ["string", "null"] },
+              "error": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "destination_check": { "type": ["object", "null"] },
+        "error": { "type": ["string", "null"] },
+        "created_at": { "type": "string" },
+        "finished_at": { "type": ["string", "null"] }
+      }
+    },
+    "report": {
+      "type": "object",
+      "required": ["id", "scan_id", "title", "file_name", "size_bytes", "created_at", "download_url"],
+      "properties": {
+        "id": { "type": "string" },
+        "scan_id": { "type": "string" },
+        "title": { "type": "string" },
+        "file_name": { "type": "string" },
+        "size_bytes": { "type": "integer" },
+        "created_at": { "type": "string" },
+        "download_url": { "type": "string" }
+      }
+    },
+    "search_hit": {
+      "type": "object",
+      "required": ["file", "scan_label", "rank", "matched_keywords"],
+      "properties": {
+        "file": { "$ref": "#/$defs/recovered_file" },
+        "scan_label": { "type": "string" },
+        "rank": { "type": "number" },
+        "matched_keywords": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

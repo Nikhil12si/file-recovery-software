@@ -1,0 +1,55 @@
+[
+  {
+    "file": {
+      "id": "5ed8e597-231a-4c02-88c6-e984fd009ee5",
+      "scan_id": "1a5b09ff-830a-4009-953f-cb382e198cd7",
+      "candidate_id": "vol-D-mft-40040",
+      "method": "mft",
+      "file_name": "Invoice_4411_Acme_Corporation.pdf",
+      "suggested_name": "Invoice_4411_Acme_Corporation_2025.pdf",
+      "display_name": "Invoice_4411_Acme_Corporation.pdf",
+      "original_path": "D:\\Shared\\Scans\\Invoice_4411_Acme_Corporation.pdf",
+      "extension": "pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 1756,
+      "confidence": "high",
+      "confidence_score": 100,
+      "confidence_reasons": [
+        "File signature intact",
+        "All clusters still free - not overwritten",
+        "Content verified: PDF with 1 page(s)"
+      ],
+      "cluster_id": "1a5b09ff-830a-4009-953f-cb382e198cd7:c1",
+      "lba": 256,
+      "absolute_lba": 2304,
+      "fragment_count": 1,
+      "timestamps": {
+        "created": "2025-05-26T09:12:00Z",
+        "modified": "2025-10-26T17:45:00Z",
+        "mft_modified": "2026-02-26T11:06:00Z",
+        "accessed": "2026-01-26T08:00:00Z"
+      },
+      "keywords": [
+        "invoice",
+        "invoice consulting",
+        "acme corporation",
+        "payment",
+        "delivered acme",
+        "consulting services",
+        "services delivered",
+        "acme"
+      ],
+      "has_thumbnail": true,
+      "preview_kind": "image",
+      "restored": false,
+      "restored_path": null,
+      "source_id": "vol-D"
+    },
+    "scan_label": "Accidental delete - D: (Quick) 2026-10-05 10:49",
+    "rank": 1.0,
+    "matched_keywords": [
+      "invoice",
+      "invoice consulting"
+    ]
+  }
+]

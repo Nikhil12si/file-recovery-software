@@ -1,0 +1,13 @@
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.<payload>.<signature>",
+  "token_type": "bearer",
+  "expires_at": "2026-10-05T18:49:46Z",
+  "user": {
+    "id": "cc890193-99ef-4e2e-9061-3076a4b1e767",
+    "email": "alice@example.com",
+    "full_name": "Alice Analyst",
+    "role": "admin",
+    "created_at": "2026-10-05T10:49:46Z",
+    "last_login_at": null
+  }
+}

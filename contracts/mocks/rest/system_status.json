@@ -1,0 +1,10 @@
+{
+  "platform": "Linux 6.18.44-fc-v70",
+  "elevated": true,
+  "elevation_type": "full",
+  "engine_available": true,
+  "mock_mode": true,
+  "warnings": [
+    "Simulation mode: the recovery engine binary was not found (or ENGINE_MODE=mock). Drives and results are simulated so the interface can be explored safely."
+  ]
+}

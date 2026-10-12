@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "public": "web/out",
+    "ignore": ["firebase.json", "**/.*"],
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "redirects": [{ "source": "/", "destination": "/dashboard", "type": 302 }],
+    "headers": [
+      { "source": "**/*.html", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+      { "source": "/downloads/**", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
+    ]
+  }
+}

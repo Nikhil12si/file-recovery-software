@@ -1,0 +1,54 @@
+{
+  "id": "026bfd94-27b2-47fd-aa3a-ecb4ec750fff",
+  "scan_id": "1a5b09ff-830a-4009-953f-cb382e198cd7",
+  "status": "completed",
+  "destination": "E:\\Recovered\\2026-10-05",
+  "total_files": 3,
+  "restored_files": 3,
+  "failed_files": 0,
+  "bytes_written": 43276,
+  "percent": 100.0,
+  "items": [
+    {
+      "file_id": "1696588e-5193-48cd-ac2f-6c50306f4e92",
+      "status": "ok",
+      "output_path": "E:\\Recovered\\2026-10-05\\IMG_2047.JPG",
+      "bytes_written": 20050,
+      "sha256": "176e93dd0cc638a51b4f50eab2e4d22891a4513c2d519593d4a842f866ca8bf1",
+      "error": null
+    },
+    {
+      "file_id": "1517bd7f-402d-4952-8a07-1fdf27044bdc",
+      "status": "ok",
+      "output_path": "E:\\Recovered\\2026-10-05\\IMG_2040.JPG",
+      "bytes_written": 21485,
+      "sha256": "0f7b451598a802b44c78aeb1bd50f5e33d388294b58f5323285b16926c72a210",
+      "error": null
+    },
+    {
+      "file_id": "174fa541-5afd-4c1c-b37d-25987e788500",
+      "status": "ok",
+      "output_path": "E:\\Recovered\\2026-10-05\\Medical_Lab_Results_March.pdf",
+      "bytes_written": 1741,
+      "sha256": "29d0096c03d3d20424f97cbf908ee77beaa5aa2e6b1bfedd180e235d78b1a6bd",
+      "error": null
+    }
+  ],
+  "destination_check": {
+    "safe": true,
+    "reason_code": "OK",
+    "destination": "E:\\Recovered\\2026-10-05",
+    "destination_volume_root": "E:\\",
+    "destination_volume_guid": "\\\\?\\Volume{00000002-0000-0000-0000-000000000069}\\",
+    "destination_physical_drives": [
+      2
+    ],
+    "free_bytes": 31994200064,
+    "required_bytes": 43276,
+    "conflicts": [],
+    "warnings": []
+  },
+  "error": null,
+  "created_at": "2026-10-05T10:49:46Z",
+  "finished_at": "2026-10-05T10:49:46Z"
+}

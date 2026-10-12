@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1a5b09ff-830a-4009-953f-cb382e198cd7:c1",
+    "scan_id": "1a5b09ff-830a-4009-953f-cb382e198cd7",
+    "label": "Deletion event #1: 14 files (mostly .jpg), around 2026-01-08",
+    "file_count": 14,
+    "total_bytes": 188442,
+    "lba_start": 2064,
+    "lba_end": 3160,
+    "dominant_extension": "jpg",
+    "time_start": "2026-01-08T11:02:00Z",
+    "time_end": "2026-03-26T11:09:00Z"
+  }
+]

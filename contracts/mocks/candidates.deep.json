@@ -1,0 +1,637 @@
+{
+  "schema_version": "1.0",
+  "engine": {
+    "name": "win_recovery_engine",
+    "version": "1.0.0",
+    "platform": "windows-x64"
+  },
+  "scan": {
+    "scan_id": "demo-deep",
+    "mode": "deep",
+    "target_scope": "drive",
+    "folder_path": null,
+    "started_at": "2026-10-05T10:49:45Z",
+    "finished_at": "2026-10-05T10:49:46Z",
+    "status": "completed",
+    "elevated": true,
+    "source_specs": [
+      "\\\\.\\PhysicalDrive1"
+    ],
+    "type_filter": [],
+    "options": {
+      "sector_aligned": true,
+      "unallocated_only": false,
+      "verify_headers": true,
+      "sample_dir": "E:\\RecoveryWork\\samples",
+      "sample_bytes": 2097152,
+      "max_candidates": 500000
+    }
+  },
+  "sources": [
+    {
+      "source_id": "pd1",
+      "device_path": "\\\\.\\PhysicalDrive1",
+      "kind": "physical",
+      "display_name": "Disk 1 (WDC WD20EZRZ-00Z5HB0)",
+      "letter": null,
+      "volume_guid_path": null,
+      "filesystem": "Unknown",
+      "media_type": "HDD",
+      "sector_size": 512,
+      "cluster_size": 4096,
+      "total_bytes": 2000398934016,
+      "bytes_scanned": 2000398934016,
+      "partition_offset_bytes": 0,
+      "volume_offset_in_device": 0,
+      "physical_drive_index": 1,
+      "mft_records_scanned": 0,
+      "deleted_entries_found": 23,
+      "candidates": 16,
+      "read_errors": 0,
+      "status": "completed",
+      "error": null,
+      "elapsed_seconds": 0.21
+    }
+  ],
+  "statistics": {
+    "total_candidates": 12,
+    "total_bytes": 111211,
+    "read_errors": 0,
+    "samples_bytes_written": 111211,
+    "by_method": {
+      "carve": 16
+    },
+    "by_extension": {
+      "pdf": 7,
+      "jpg": 5,
+      "docx": 2,
+      "png": 2
+    }
+  },
+  "candidates": [
+    {
+      "id": "pd1-carve-2000",
+      "source_id": "pd1",
+      "source_device": "\\\\.\\PhysicalDrive1",
+      "source_kind": "physical",
+      "method": "carve",
+      "file_name": null,
+      "original_path": null,
+      "extension": "pdf",
+      "signature": "pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 1741,
+      "lba": 16,
+      "absolute_lba": 16,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 8192,
+          "length": 1741,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": null,
+        "modified": null,
+        "mft_modified": null,
+        "accessed": null
+      },
+      "mft": null,
+      "integrity": {
+        "header_check": "match",
+        "footer_found": true,
+        "size_estimated": false,
+        "size_source": "footer",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "carved: original file name and folder are not stored in file content"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\pd1-carve-2000.pdf",
+      "sample_bytes": 1741
+    },
+    {
+      "id": "pd1-carve-9000",
+      "source_id": "pd1",
+      "source_device": "\\\\.\\PhysicalDrive1",
+      "source_kind": "physical",
+      "method": "carve",
+      "file_name": null,
+      "original_path": null,
+      "extension": "pdf",
+      "signature": "pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 1741,
+      "lba": 72,
+      "absolute_lba": 72,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 36864,
+          "length": 1741,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": null,
+        "modified": null,
+        "mft_modified": null,
+        "accessed": null
+      },
+      "mft": null,
+      "integrity": {
+        "header_check": "match",
+        "footer_found": true,
+        "size_estimated": false,
+        "size_source": "footer",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "carved: original file name and folder are not stored in file content"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\pd1-carve-9000.pdf",
+      "sample_bytes": 1741
+    },
+    {
+      "id": "pd1-carve-e000",
+      "source_id": "pd1",
+      "source_device": "\\\\.\\PhysicalDrive1",
+      "source_kind": "physical",
+      "method": "carve",
+      "file_name": null,
+      "original_path": null,
+      "extension": "pdf",
+      "signature": "pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 1713,
+      "lba": 112,
+      "absolute_lba": 112,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 57344,
+          "length": 1713,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": null,
+        "modified": null,
+        "mft_modified": null,
+        "accessed": null
+      },
+      "mft": null,
+      "integrity": {
+        "header_check": "match",
+        "footer_found": true,
+        "size_estimated": false,
+        "size_source": "footer",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "carved: original file name and folder are not stored in file content"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\pd1-carve-e000.pdf",
+      "sample_bytes": 1713
+    },
+    {
+      "id": "pd1-carve-13000",
+      "source_id": "pd1",
+      "source_device": "\\\\.\\PhysicalDrive1",
+      "source_kind": "physical",
+      "method": "carve",
+      "file_name": null,
+      "original_path": null,
+      "extension": "pdf",
+      "signature": "pdf",
+      "mime_type": "application/pdf",
+      "size_bytes": 1768,
+      "lba": 152,
+      "absolute_lba": 152,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 77824,
+          "length": 1768,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": null,
+        "modified": null,
+        "mft_modified": null,
+        "accessed": null
+      },
+      "mft": null,
+      "integrity": {
+        "header_check": "match",
+        "footer_found": true,
+        "size_estimated": false,
+        "size_source": "footer",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "carved: original file name and folder are not stored in file content"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\pd1-carve-13000.pdf",
+      "sample_bytes": 1768
+    },
+    {
+      "id": "pd1-carve-18000",
+      "source_id": "pd1",
+      "source_device": "\\\\.\\PhysicalDrive1",
+      "source_kind": "physical",
+      "method": "carve",
+      "file_name": null,
+      "original_path": null,
+      "extension": "jpg",
+      "signature": "jpg",
+      "mime_type": "image/jpeg",
+      "size_bytes": 16406,
+      "lba": 192,
+      "absolute_lba": 192,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 98304,
+          "length": 16406,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": null,
+        "modified": null,
+        "mft_modified": null,
+        "accessed": null
+      },
+      "mft": null,
+      "integrity": {
+        "header_check": "match",
+        "footer_found": true,
+        "size_estimated": false,
+        "size_source": "footer",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "carved: original file name and folder are not stored in file content"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\pd1-carve-18000.jpg",
+      "sample_bytes": 16406
+    },
+    {
+      "id": "pd1-carve-1f000",
+      "source_id": "pd1",
+      "source_device": "\\\\.\\PhysicalDrive1",
+      "source_kind": "physical",
+      "method": "carve",
+      "file_name": null,
+      "original_path": null,
+      "extension": "jpg",
+      "signature": "jpg",
+      "mime_type": "image/jpeg",
+      "size_bytes": 18626,
+      "lba": 248,
+      "absolute_lba": 248,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 126976,
+          "length": 18626,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": null,
+        "modified": null,
+        "mft_modified": null,
+        "accessed": null
+      },
+      "mft": null,
+      "integrity": {
+        "header_check": "match",
+        "footer_found": true,
+        "size_estimated": false,
+        "size_source": "footer",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "carved: original file name and folder are not stored in file content"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\pd1-carve-1f000.jpg",
+      "sample_bytes": 18626
+    },
+    {
+      "id": "pd1-carve-25000",
+      "source_id": "pd1",
+      "source_device": "\\\\.\\PhysicalDrive1",
+      "source_kind": "physical",
+      "method": "carve",
+      "file_name": null,
+      "original_path": null,
+      "extension": "jpg",
+      "signature": "jpg",
+      "mime_type": "image/jpeg",
+      "size_bytes": 18626,
+      "lba": 296,
+      "absolute_lba": 296,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 151552,
+          "length": 18626,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": null,
+        "modified": null,
+        "mft_modified": null,
+        "accessed": null
+      },
+      "mft": null,
+      "integrity": {
+        "header_check": "match",
+        "footer_found": true,
+        "size_estimated": false,
+        "size_source": "footer",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "carved: original file name and folder are not stored in file content"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\pd1-carve-25000.jpg",
+      "sample_bytes": 18626
+    },
+    {
+      "id": "pd1-carve-2d000",
+      "source_id": "pd1",
+      "source_device": "\\\\.\\PhysicalDrive1",
+      "source_kind": "physical",
+      "method": "carve",
+      "file_name": null,
+      "original_path": null,
+      "extension": "docx",
+      "signature": "zip",
+      "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "size_bytes": 1236,
+      "lba": 360,
+      "absolute_lba": 360,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 184320,
+          "length": 1236,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": null,
+        "modified": null,
+        "mft_modified": null,
+        "accessed": null
+      },
+      "mft": null,
+      "integrity": {
+        "header_check": "match",
+        "footer_found": false,
+        "size_estimated": true,
+        "size_source": "estimated",
+        "truncated": true,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "carved: original file name and folder are not stored in file content"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\pd1-carve-2d000.docx",
+      "sample_bytes": 1236
+    },
+    {
+      "id": "pd1-carve-33000",
+      "source_id": "pd1",
+      "source_device": "\\\\.\\PhysicalDrive1",
+      "source_kind": "physical",
+      "method": "carve",
+      "file_name": null,
+      "original_path": null,
+      "extension": "png",
+      "signature": "png",
+      "mime_type": "image/png",
+      "size_bytes": 2686,
+      "lba": 408,
+      "absolute_lba": 408,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 208896,
+          "length": 2686,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": null,
+        "modified": null,
+        "mft_modified": null,
+        "accessed": null
+      },
+      "mft": null,
+      "integrity": {
+        "header_check": "match",
+        "footer_found": true,
+        "size_estimated": false,
+        "size_source": "footer",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "carved: original file name and folder are not stored in file content"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\pd1-carve-33000.png",
+      "sample_bytes": 2686
+    },
+    {
+      "id": "pd1-carve-39000",
+      "source_id": "pd1",
+      "source_device": "\\\\.\\PhysicalDrive1",
+      "source_kind": "physical",
+      "method": "carve",
+      "file_name": null,
+      "original_path": null,
+      "extension": "jpg",
+      "signature": "jpg",
+      "mime_type": "image/jpeg",
+      "size_bytes": 18069,
+      "lba": 456,
+      "absolute_lba": 456,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 233472,
+          "length": 18069,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": null,
+        "modified": null,
+        "mft_modified": null,
+        "accessed": null
+      },
+      "mft": null,
+      "integrity": {
+        "header_check": "match",
+        "footer_found": true,
+        "size_estimated": false,
+        "size_source": "footer",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "carved: original file name and folder are not stored in file content"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\pd1-carve-39000.jpg",
+      "sample_bytes": 18069
+    },
+    {
+      "id": "pd1-carve-41000",
+      "source_id": "pd1",
+      "source_device": "\\\\.\\PhysicalDrive1",
+      "source_kind": "physical",
+      "method": "carve",
+      "file_name": null,
+      "original_path": null,
+      "extension": "docx",
+      "signature": "zip",
+      "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "size_bytes": 1225,
+      "lba": 520,
+      "absolute_lba": 520,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 266240,
+          "length": 1225,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": null,
+        "modified": null,
+        "mft_modified": null,
+        "accessed": null
+      },
+      "mft": null,
+      "integrity": {
+        "header_check": "match",
+        "footer_found": true,
+        "size_estimated": false,
+        "size_source": "footer",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "carved: original file name and folder are not stored in file content"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\pd1-carve-41000.docx",
+      "sample_bytes": 1225
+    },
+    {
+      "id": "pd1-carve-43000",
+      "source_id": "pd1",
+      "source_device": "\\\\.\\PhysicalDrive1",
+      "source_kind": "physical",
+      "method": "carve",
+      "file_name": null,
+      "original_path": null,
+      "extension": "png",
+      "signature": "png",
+      "mime_type": "image/png",
+      "size_bytes": 2686,
+      "lba": 536,
+      "absolute_lba": 536,
+      "sector_size": 512,
+      "extents": [
+        {
+          "offset": 274432,
+          "length": 2686,
+          "sparse": false
+        }
+      ],
+      "fragment_count": 1,
+      "resident_data_b64": null,
+      "timestamps": {
+        "created": null,
+        "modified": null,
+        "mft_modified": null,
+        "accessed": null
+      },
+      "mft": null,
+      "integrity": {
+        "header_check": "match",
+        "footer_found": true,
+        "size_estimated": false,
+        "size_source": "footer",
+        "truncated": false,
+        "allocated_ratio": 0.0,
+        "path_orphaned": false
+      },
+      "partition_hint": null,
+      "notes": [
+        "carved: original file name and folder are not stored in file content"
+      ],
+      "sample_path": "E:\\RecoveryWork\\samples\\pd1-carve-43000.png",
+      "sample_bytes": 2686
+    }
+  ]
+}

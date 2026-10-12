@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+body { @apply bg-slate-50 text-slate-800 antialiased; }
+
+@layer components {
+  .card { @apply rounded-xl border border-slate-200 bg-white shadow-sm; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply btn bg-brand-600 text-white hover:bg-brand-700; }
+  .btn-secondary { @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50; }
+  .btn-danger { @apply btn bg-red-600 text-white hover:bg-red-700; }
+  .btn-ghost { @apply btn text-slate-600 hover:bg-slate-100; }
+  .input { @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500; }
+  .label { @apply mb-1 block text-sm font-medium text-slate-700; }
+  /* Direct children only, so interactive widgets inside a section keep their own styling. */
+  .prose-manual > h2 { @apply mt-2 text-2xl font-bold text-slate-900; }
+  .prose-manual > h3 { @apply mt-6 text-lg font-semibold text-slate-900; }
+  .prose-manual > p { @apply mt-3 leading-7 text-slate-700; }
+  .prose-manual > ul { @apply mt-3 list-disc space-y-1 pl-6 text-slate-700; }
+  .prose-manual > ol { @apply mt-3 list-decimal space-y-2 pl-6 text-slate-700; }
+  .prose-manual kbd { @apply rounded border border-slate-300 bg-slate-50 px-1.5 py-0.5 font-mono text-xs shadow-sm; }
+  .prose-manual code { @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.85em] text-slate-800; }
+  .prose-manual pre { @apply mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-6 text-slate-100; }
+  .prose-manual pre code { @apply bg-transparent p-0 text-slate-100; }
+}

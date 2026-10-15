@@ -29,28 +29,64 @@ export function AuthProvider({ children }) {
       router.replace('/login?expired=1');
     });
     const cached = session.user();
-    if (!session.token()) {
+    const token = session.token();
+    if (!token) {
       setReady(true);
       return;
     }
-    setUser(cached);
-    api.me()
-      .then((u) => setUser(u))
-      .catch(() => signOutLocal())
-      .finally(() => setReady(true));
+    if (cached) {
+      setUser(cached);
+    }
+    setReady(true);
+
+    if (typeof api.me === 'function') {
+      api.me()
+        .then((u) => {
+          if (u) {
+            setUser(u);
+            session.save({ access_token: token, user: u });
+          }
+        })
+        .catch((err) => {
+          console.warn('api.me verification warning:', err);
+          if (!session.user()) {
+            signOutLocal();
+          }
+        })
+        .finally(() => setReady(true));
+    } else {
+      setReady(true);
+    }
   }, [router, signOutLocal]);
 
   const value = useMemo(() => ({
     user,
     ready,
-    async login(email, password) {
-      const auth = await api.login(email, password);
+    saveAuth(auth) {
       session.save(auth);
       setUser(auth.user);
       return auth.user;
     },
-    async register(email, password, fullName) {
-      const auth = await api.register(email, password, fullName);
+    async login(email, password, phoneNumber) {
+      const res = await api.login(email, password, phoneNumber);
+      if (res && res.two_factor_required) {
+        return res;
+      }
+      session.save(res);
+      setUser(res.user);
+      return res.user;
+    },
+    async verify2FA(verificationId, code) {
+      const auth = await api.verify2FA(verificationId, code);
+      session.save(auth);
+      setUser(auth.user);
+      return auth.user;
+    },
+    async resend2FA(verificationId, phoneNumber) {
+      return await api.resend2FA(verificationId, phoneNumber);
+    },
+    async register(email, password, fullName, phoneNumber) {
+      const auth = await api.register(email, password, fullName, phoneNumber);
       session.save(auth);
       setUser(auth.user);
       return auth.user;

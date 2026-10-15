@@ -89,8 +89,8 @@ export default function SessionHistory() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">History &amp; reports</h1>
-          <p className="mt-1 text-sm text-slate-500">Every scan is stored with its results, so you can come back later and restore more files.</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">History &amp; reports</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Every scan is stored with its results, so you can come back later and restore more files.</p>
         </div>
         <div className="flex gap-2">
           <input ref={fileInput} type="file" accept=".json,application/json" className="hidden" onChange={importFile} />
@@ -112,16 +112,16 @@ export default function SessionHistory() {
         </form>
         {hits && (
           <div className="mt-4">
-            {hits.length === 0 ? <p className="text-sm text-slate-500">No recovered document mentions “{search}”.</p> : (
-              <ul className="divide-y divide-slate-100">
+            {hits.length === 0 ? <p className="text-sm text-slate-500 dark:text-slate-400">No recovered document mentions “{search}”.</p> : (
+              <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                 {hits.map((h) => (
                   <li key={h.file.id} className="flex flex-wrap items-center gap-3 py-2 text-sm">
                     <Icon name="file" className="h-4 w-4 text-slate-400" />
-                    <span className="font-medium text-slate-900">{h.file.display_name}</span>
+                    <span className="font-medium text-slate-900 dark:text-slate-100">{h.file.display_name}</span>
                     <ConfidenceBadge level={h.file.confidence} score={h.file.confidence_score} />
                     {h.matched_keywords.map((k) => <Badge key={k} tone="purple">{k}</Badge>)}
-                    <span className="text-xs text-slate-500">in {h.scan_label}</span>
-                    <Link href={`/dashboard?scan=${h.file.scan_id}`} className="ml-auto text-xs font-medium text-brand-600 hover:underline">Open session</Link>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">in {h.scan_label}</span>
+                    <Link href={`/dashboard?scan=${h.file.scan_id}`} className="ml-auto text-xs font-medium text-brand-600 dark:text-indigo-400 hover:underline">Open session</Link>
                   </li>
                 ))}
               </ul>
@@ -132,42 +132,42 @@ export default function SessionHistory() {
 
       {/* sessions */}
       <div className="card">
-        <div className="flex items-center gap-3 border-b border-slate-200 p-4">
+        <div className="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 p-4">
           <input className="input max-w-xs" placeholder="Filter sessions…" value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} />
-          {data && <span className="text-sm text-slate-500">{data.total} session(s)</span>}
+          {data && <span className="text-sm text-slate-500 dark:text-slate-400">{data.total} session(s)</span>}
         </div>
         {!data && <div className="flex justify-center py-10"><Spinner className="h-6 w-6 text-slate-400" /></div>}
         {data && data.items.length === 0 && <EmptyState title="No recovery sessions yet" icon="clock">Start a scan from the Recover page.</EmptyState>}
         {data && data.items.length > 0 && (
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <thead className="bg-slate-50 dark:bg-slate-900/90 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="px-4 py-2">Session</th><th className="px-3 py-2">Status</th><th className="px-3 py-2">Files</th>
-                  <th className="px-3 py-2">High / Med / Low</th><th className="px-3 py-2">Started</th><th className="px-3 py-2" />
+                  <th className="px-4 py-2.5">Session</th><th className="px-3 py-2.5">Status</th><th className="px-3 py-2.5">Files</th>
+                  <th className="px-3 py-2.5">High / Med / Low</th><th className="px-3 py-2.5">Started</th><th className="px-3 py-2.5" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
                 {data.items.map((s) => (
-                  <tr key={s.id} className="hover:bg-slate-50">
-                    <td className="max-w-sm px-4 py-2">
-                      <Link href={`/dashboard?scan=${s.id}`} className="block truncate font-medium text-slate-900 hover:text-brand-600">{s.label}</Link>
-                      <div className="text-xs text-slate-500">{s.mode === 'quick' ? 'Quick' : 'Deep'} · {s.target_scope === 'all' ? 'All drives' : s.target_scope === 'folder' ? s.folder_path : s.sources.join(', ')}</div>
+                  <tr key={s.id} className="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <td className="max-w-sm px-4 py-2.5">
+                      <Link href={`/dashboard?scan=${s.id}`} className="block truncate font-medium text-slate-900 dark:text-slate-100 hover:text-brand-600 dark:hover:text-brand-400">{s.label}</Link>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">{s.mode === 'quick' ? 'Quick' : 'Deep'} · {s.target_scope === 'all' ? 'All drives' : s.target_scope === 'folder' ? s.folder_path : s.sources.join(', ')}</div>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-3 py-2.5">
                       <Badge tone={STATUS_TONE[s.status]}>{s.status}</Badge>
-                      {['running', 'analyzing'].includes(s.status) && <div className="mt-1 text-xs text-slate-500">{Number(s.progress.overall_percent || 0).toFixed(0)}%</div>}
+                      {['running', 'analyzing'].includes(s.status) && <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">{Number(s.progress.overall_percent || 0).toFixed(0)}%</div>}
                     </td>
-                    <td className="px-3 py-2 tabular-nums">{(s.totals.files || 0).toLocaleString()}<div className="text-xs text-slate-500">{formatBytes(s.totals.bytes)}</div></td>
-                    <td className="px-3 py-2 text-xs tabular-nums">
-                      <span className="text-emerald-600">{s.totals.high}</span> / <span className="text-amber-600">{s.totals.medium}</span> / <span className="text-red-600">{s.totals.low}</span>
+                    <td className="px-3 py-2.5 tabular-nums text-slate-700 dark:text-slate-300">{(s.totals.files || 0).toLocaleString()}<div className="text-xs text-slate-500 dark:text-slate-400">{formatBytes(s.totals.bytes)}</div></td>
+                    <td className="px-3 py-2.5 text-xs tabular-nums">
+                      <span className="text-emerald-600 dark:text-emerald-400">{s.totals.high}</span> / <span className="text-amber-600 dark:text-amber-400">{s.totals.medium}</span> / <span className="text-red-600 dark:text-red-400">{s.totals.low}</span>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-2 text-xs text-slate-500">{formatDate(s.started_at || s.created_at)}</td>
-                    <td className="whitespace-nowrap px-3 py-2 text-right">
+                    <td className="whitespace-nowrap px-3 py-2.5 text-xs text-slate-500 dark:text-slate-400">{formatDate(s.started_at || s.created_at)}</td>
+                    <td className="whitespace-nowrap px-3 py-2.5 text-right">
                       <Link href={`/dashboard?scan=${s.id}`} className="btn-ghost px-2 py-1 text-xs">Open</Link>
                       <button type="button" className="btn-ghost px-2 py-1 text-xs" disabled={Boolean(busy[s.id]) || ['queued', 'running', 'analyzing'].includes(s.status)}
                         onClick={() => report(s)}>{busy[s.id] === 'report' ? <Spinner className="h-3 w-3" /> : <Icon name="download" />} Report</button>
-                      <button type="button" className="btn-ghost px-2 py-1 text-xs text-red-600" disabled={Boolean(busy[s.id]) || ['queued', 'running', 'analyzing'].includes(s.status)}
+                      <button type="button" className="btn-ghost px-2 py-1 text-xs text-red-600 dark:text-red-400" disabled={Boolean(busy[s.id]) || ['queued', 'running', 'analyzing'].includes(s.status)}
                         onClick={() => remove(s)}>Delete</button>
                     </td>
                   </tr>
@@ -177,9 +177,9 @@ export default function SessionHistory() {
           </div>
         )}
         {data && data.total_pages > 1 && (
-          <div className="flex items-center justify-end gap-2 border-t border-slate-200 p-3 text-sm">
+          <div className="flex items-center justify-end gap-2 border-t border-slate-200 dark:border-slate-800 p-3 text-sm">
             <button type="button" className="btn-secondary px-3 py-1" disabled={page <= 1} onClick={() => setPage(page - 1)}>Previous</button>
-            <span>Page {page} / {data.total_pages}</span>
+            <span className="text-slate-600 dark:text-slate-400">Page {page} / {data.total_pages}</span>
             <button type="button" className="btn-secondary px-3 py-1" disabled={page >= data.total_pages} onClick={() => setPage(page + 1)}>Next</button>
           </div>
         )}
@@ -187,15 +187,15 @@ export default function SessionHistory() {
 
       {/* reports */}
       <div className="card p-4">
-        <h2 className="font-semibold text-slate-900">Generated reports</h2>
-        {reports.length === 0 ? <p className="mt-2 text-sm text-slate-500">No PDF reports yet. Use “Report” on a finished session.</p> : (
-          <ul className="mt-2 divide-y divide-slate-100">
+        <h2 className="font-semibold text-slate-900 dark:text-white">Generated reports</h2>
+        {reports.length === 0 ? <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">No PDF reports yet. Use “Report” on a finished session.</p> : (
+          <ul className="mt-2 divide-y divide-slate-100 dark:divide-slate-800">
             {reports.map((r) => (
               <li key={r.id} className={classNames('flex flex-wrap items-center gap-3 py-2 text-sm')}>
                 <Icon name="file" className="h-4 w-4 text-red-500" />
-                <span className="font-medium">{r.title}</span>
-                <span className="text-xs text-slate-500">{formatDate(r.created_at)} · {formatBytes(r.size_bytes)}</span>
-                <button type="button" className="ml-auto text-xs font-medium text-brand-600 hover:underline"
+                <span className="font-medium text-slate-900 dark:text-slate-100">{r.title}</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">{formatDate(r.created_at)} · {formatBytes(r.size_bytes)}</span>
+                <button type="button" className="ml-auto text-xs font-medium text-brand-600 dark:text-indigo-400 hover:underline"
                   onClick={() => api.downloadFile(r.download_url, r.file_name).catch((e) => setError(e.message))}>Download PDF</button>
               </li>
             ))}

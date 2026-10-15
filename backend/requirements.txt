@@ -12,6 +12,7 @@ PyMuPDF>=1.23                  # PDF text, metadata and first-page thumbnails
 pypdf>=4.0                     # pure-python PDF fallback
 yake>=0.4.8                    # unsupervised keyword extraction (TF-IDF fallback built in)
 reportlab>=4.0                 # PDF reports
+twilio>=8.0.0                  # 2-step SMS verification via Twilio
 
 # development / tests
 pytest>=8.0

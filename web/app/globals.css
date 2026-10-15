@@ -2,26 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: light; }
-body { @apply bg-slate-50 text-slate-800 antialiased; }
+:root { color-scheme: light dark; }
+body { @apply bg-slate-100/90 text-slate-800 antialiased transition-colors duration-200 dark:bg-[#0b0f19] dark:text-slate-100; }
 
 @layer components {
-  .card { @apply rounded-xl border border-slate-200 bg-white shadow-sm; }
+  .card { @apply rounded-xl border border-slate-200/90 bg-white shadow-sm transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/90 dark:shadow-slate-950/40; }
   .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50; }
-  .btn-primary { @apply btn bg-brand-600 text-white hover:bg-brand-700; }
-  .btn-secondary { @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50; }
-  .btn-danger { @apply btn bg-red-600 text-white hover:bg-red-700; }
-  .btn-ghost { @apply btn text-slate-600 hover:bg-slate-100; }
-  .input { @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500; }
-  .label { @apply mb-1 block text-sm font-medium text-slate-700; }
+  .btn-primary { @apply btn bg-brand-600 text-white hover:bg-brand-500 shadow-sm shadow-brand-600/30 dark:bg-indigo-600 dark:hover:bg-indigo-500; }
+  .btn-secondary { @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition-colors dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-200 dark:hover:bg-slate-700; }
+  .btn-danger { @apply btn bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500; }
+  .btn-ghost { @apply btn text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800/80; }
+  .input { @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 transition-colors dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:placeholder:text-slate-500; }
+  .label { @apply mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300; }
   /* Direct children only, so interactive widgets inside a section keep their own styling. */
-  .prose-manual > h2 { @apply mt-2 text-2xl font-bold text-slate-900; }
-  .prose-manual > h3 { @apply mt-6 text-lg font-semibold text-slate-900; }
-  .prose-manual > p { @apply mt-3 leading-7 text-slate-700; }
-  .prose-manual > ul { @apply mt-3 list-disc space-y-1 pl-6 text-slate-700; }
-  .prose-manual > ol { @apply mt-3 list-decimal space-y-2 pl-6 text-slate-700; }
-  .prose-manual kbd { @apply rounded border border-slate-300 bg-slate-50 px-1.5 py-0.5 font-mono text-xs shadow-sm; }
-  .prose-manual code { @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.85em] text-slate-800; }
-  .prose-manual pre { @apply mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-6 text-slate-100; }
-  .prose-manual pre code { @apply bg-transparent p-0 text-slate-100; }
+  .prose-manual > h2 { @apply mt-2 text-2xl font-bold text-slate-900 dark:text-slate-100; }
+  .prose-manual > h3 { @apply mt-6 text-lg font-semibold text-slate-900 dark:text-slate-200; }
+  .prose-manual > p { @apply mt-3 leading-7 text-slate-700 dark:text-slate-300; }
+  .prose-manual > ul { @apply mt-3 list-disc space-y-1 pl-6 text-slate-700 dark:text-slate-300; }
+  .prose-manual > ol { @apply mt-3 list-decimal space-y-2 pl-6 text-slate-700 dark:text-slate-300; }
+  .prose-manual kbd { @apply rounded border border-slate-300 bg-slate-50 px-1.5 py-0.5 font-mono text-xs shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300; }
+  .prose-manual code { @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.85em] text-slate-800 dark:bg-slate-800 dark:text-slate-200; }
+  .prose-manual pre { @apply mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm leading-6 text-slate-100 dark:bg-black/90 dark:border dark:border-slate-800; }
+  .prose-manual h4 { @apply text-slate-900 dark:text-slate-100; }
+  .prose-manual dt { @apply font-semibold text-slate-900 dark:text-slate-100; }
+  .prose-manual dd { @apply text-slate-600 dark:text-slate-300; }
 }
+
+/* Sleek dark scrollbar */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.dark ::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+

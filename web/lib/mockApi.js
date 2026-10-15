@@ -230,21 +230,125 @@ function requireScan(id) {
   return s;
 }
 
+const pending2FA = new Map();
+
+function maskPhoneNumber(phone) {
+  if (!phone) return '+91 ••••• ••076';
+  const clean = String(phone).trim();
+  if (clean.length <= 4) return clean;
+  const last4 = clean.slice(-4);
+  const prefix = clean.slice(0, 3);
+  return `${prefix} ••••• ••${last4.slice(-2)}`;
+}
+
 export const mockApi = {
-  async register(email, password, fullName) {
+  async register(email, password, fullName, phoneNumber) {
     await sleep(250);
     if (!password || password.length < 8) throw new MockError(422, 'password: String should have at least 8 characters');
-    store.user = { id: uid(), email, full_name: fullName || null, role: 'admin', created_at: now(), last_login_at: now() };
+    store.user = {
+      id: uid(),
+      email,
+      full_name: fullName || null,
+      phone_number: phoneNumber || '+91 98765 43210',
+      role: 'admin',
+      created_at: now(),
+      last_login_at: now(),
+    };
     return { access_token: 'mock-token', token_type: 'bearer', expires_at: new Date(Date.now() + 8 * 3600e3).toISOString(), user: store.user };
   },
-  async login(email, password) {
+  async login(email, password, phoneNumber) {
     await sleep(250);
     if (!password) throw new MockError(401, 'Invalid email or password');
-    store.user = store.user || { id: uid(), email, full_name: 'Demo User', role: 'admin', created_at: now(), last_login_at: now() };
-    return { access_token: 'mock-token', token_type: 'bearer', expires_at: new Date(Date.now() + 8 * 3600e3).toISOString(), user: store.user };
+    const phone = phoneNumber || store.user?.phone_number || '+91 98765 43210';
+    store.user = store.user || {
+      id: uid(),
+      email,
+      full_name: 'Demo User',
+      phone_number: phone,
+      role: 'admin',
+      created_at: now(),
+      last_login_at: now(),
+    };
+    if (phoneNumber) {
+      store.user.phone_number = phoneNumber;
+    }
+    
+    // 2-Step Verification with Twilio:
+    const verificationId = uid();
+    const code = '123456'; // Default mock verification code
+    pending2FA.set(verificationId, {
+      code,
+      user: store.user,
+      phone,
+      expiresAt: Date.now() + 5 * 60 * 1000,
+      attempts: 0,
+    });
+
+    return {
+      two_factor_required: true,
+      verification_id: verificationId,
+      phone_masked: maskPhoneNumber(phone),
+      dev_code: code,
+      message: `A 6-digit verification code was sent to ${maskPhoneNumber(phone)} via Twilio SMS.`,
+    };
+  },
+  async verify2FA(verificationId, code) {
+    await sleep(250);
+    const entry = pending2FA.get(verificationId);
+    if (!entry) {
+      throw new MockError(400, 'Verification session expired. Please sign in again.');
+    }
+    if (Date.now() > entry.expiresAt) {
+      pending2FA.delete(verificationId);
+      throw new MockError(400, 'Verification code has expired. Please request a new code.');
+    }
+    entry.attempts += 1;
+    if (entry.attempts > 5) {
+      pending2FA.delete(verificationId);
+      throw new MockError(429, 'Too many invalid attempts. Please start over.');
+    }
+    if (String(code).trim() !== String(entry.code)) {
+      throw new MockError(400, 'Invalid verification code. Please check your SMS and try again.');
+    }
+    pending2FA.delete(verificationId);
+    return {
+      access_token: 'mock-token',
+      token_type: 'bearer',
+      expires_at: new Date(Date.now() + 8 * 3600e3).toISOString(),
+      user: entry.user,
+    };
+  },
+  async resend2FA(verificationId, phoneNumber) {
+    await sleep(200);
+    const entry = pending2FA.get(verificationId);
+    if (!entry) {
+      throw new MockError(400, 'Session not found. Please log in again.');
+    }
+    const newCode = '123456';
+    if (phoneNumber) {
+      entry.phone = phoneNumber;
+      if (entry.user) entry.user.phone_number = phoneNumber;
+    }
+    entry.code = newCode;
+    entry.expiresAt = Date.now() + 5 * 60 * 1000;
+    entry.attempts = 0;
+    return {
+      success: true,
+      phone_masked: maskPhoneNumber(entry.phone),
+      dev_code: newCode,
+      message: `A new 6-digit verification code was sent to ${maskPhoneNumber(entry.phone)}.`,
+    };
   },
   async logout() { return null; },
-  async me() { return store.user || { id: 'demo', email: 'demo@example.com', full_name: 'Demo User', role: 'admin', created_at: now(), last_login_at: now() }; },
+  async me() {
+    try {
+      if (typeof window !== 'undefined') {
+        const u = window.localStorage.getItem('frs_user');
+        if (u) return JSON.parse(u);
+      }
+    } catch {}
+    return store.user || { id: 'demo', email: 'demo@example.com', full_name: 'Authorized User', role: 'admin', created_at: now(), last_login_at: now() };
+  },
   async health() {
     return { status: 'ok', version: '1.0.0', engine: { available: true, mock: true, path: null, version: '1.0.0-mock' }, database: { ok: true, dialect: 'sqlite' } };
   },

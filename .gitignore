@@ -12,6 +12,11 @@ backend/data/
 **/__pycache__/
 *.pyc
 .env
+.env.local
+.env.*.local
+*.env
+web/.env.local
+backend/.env
 # OS
 .DS_Store
 Thumbs.db

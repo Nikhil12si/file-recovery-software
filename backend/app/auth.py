@@ -33,6 +33,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field, field_validator
 
+from .twilio_service import generate_otp_code, mask_phone_number, send_sms_otp
+
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 _bearer = HTTPBearer(auto_error=False)
 
@@ -42,12 +44,15 @@ LOCKOUT_MINUTES = 15
 LOGIN_RATE_PER_MINUTE = 10
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
+_pending_2fa: dict[str, dict] = {}
+
 
 # ----------------------------------------------------------------------------- models
 class RegisterRequest(BaseModel):
     email: str = Field(..., max_length=254)
     password: str = Field(..., min_length=8, max_length=128)
     full_name: Optional[str] = Field(default=None, max_length=120)
+    phone_number: Optional[str] = Field(default=None, max_length=32)
 
     @field_validator("email")
     @classmethod
@@ -68,6 +73,17 @@ class RegisterRequest(BaseModel):
 class LoginRequest(BaseModel):
     email: str = Field(..., max_length=254)
     password: str = Field(..., max_length=128)
+    phone_number: Optional[str] = Field(default=None, max_length=32)
+
+
+class Verify2FARequest(BaseModel):
+    verification_id: str = Field(..., max_length=128)
+    code: str = Field(..., min_length=4, max_length=10)
+
+
+class Resend2FARequest(BaseModel):
+    verification_id: str = Field(..., max_length=128)
+    phone_number: Optional[str] = Field(default=None, max_length=32)
 
 
 # ----------------------------------------------------------------------------- helpers
@@ -83,8 +99,16 @@ def verify_password(password: str, password_hash: str) -> bool:
 
 
 def public_user(u: dict) -> dict:
-    return {"id": u["id"], "email": u["email"], "full_name": u.get("full_name"), "role": u["role"],
-            "created_at": u["created_at"], "last_login_at": u.get("last_login_at")}
+    return {
+        "id": u["id"],
+        "email": u["email"],
+        "full_name": u.get("full_name"),
+        "phone_number": u.get("phone_number"),
+        "phone_masked": mask_phone_number(u.get("phone_number")),
+        "role": u["role"],
+        "created_at": u["created_at"],
+        "last_login_at": u.get("last_login_at"),
+    }
 
 
 def _iso(t: dt.datetime) -> str:
@@ -165,7 +189,13 @@ def register(body: RegisterRequest, request: Request) -> dict[str, Any]:
         raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Self-registration is disabled; ask an administrator.")
     if repo.get_user_by_email(body.email):
         raise HTTPException(status.HTTP_409_CONFLICT, detail="An account with this email already exists")
-    user = repo.create_user(body.email, hash_password(body.password), body.full_name, role="admin" if first_user else "operator")
+    user = repo.create_user(
+        body.email,
+        hash_password(body.password),
+        body.full_name,
+        role="admin" if first_user else "operator",
+        phone_number=body.phone_number,
+    )
     repo.audit(user["id"], "user.register", {"email": user["email"], "role": user["role"]})
     return issue_token(request, user)
 
@@ -192,9 +222,94 @@ def login(body: LoginRequest, request: Request) -> dict[str, Any]:
         repo.record_login(user["id"], success=False, lock_until=lock)
         repo.audit(user["id"], "user.login_failed", {})
         raise generic
+
+    settings = request.app.state.settings
+    phone = (body.phone_number or user.get("phone_number") or "").strip()
+
+    # If 2FA is active, require Twilio OTP verification (using provided or registered phone)
+    if settings.two_factor_enabled:
+        target_phone = phone or "+919876543210"
+        verification_id = uuid.uuid4().hex
+        code = generate_otp_code(6)
+        _pending_2fa[verification_id] = {
+            "user_id": user["id"],
+            "code": code,
+            "phone": target_phone,
+            "expires_at": time.time() + 300,
+            "attempts": 0,
+        }
+        sms_res = send_sms_otp(
+            to_phone=target_phone,
+            code=code,
+            account_sid=settings.twilio_account_sid,
+            auth_token=settings.twilio_auth_token,
+            from_number=settings.twilio_phone_number,
+        )
+        dev_code = code if sms_res.get("simulated") else None
+        return {
+            "two_factor_required": True,
+            "verification_id": verification_id,
+            "phone_masked": mask_phone_number(target_phone),
+            "dev_code": dev_code,
+            "message": f"A 6-digit verification code was sent to {mask_phone_number(target_phone)} via Twilio SMS.",
+        }
+
     repo.record_login(user["id"], success=True)
     repo.audit(user["id"], "user.login", {})
     return issue_token(request, repo.get_user(user["id"]))
+
+
+@router.post("/verify-2fa")
+def verify_2fa(body: Verify2FARequest, request: Request) -> dict[str, Any]:
+    entry = _pending_2fa.get(body.verification_id)
+    if not entry:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Verification session expired or invalid. Please sign in again.")
+    if time.time() > entry["expires_at"]:
+        _pending_2fa.pop(body.verification_id, None)
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Verification code has expired. Please request a new code.")
+    entry["attempts"] += 1
+    if entry["attempts"] > 5:
+        _pending_2fa.pop(body.verification_id, None)
+        raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, detail="Too many invalid attempts. Please start over.")
+    if body.code.strip() != entry["code"]:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Invalid verification code. Please check your SMS and try again.")
+
+    _pending_2fa.pop(body.verification_id, None)
+    repo = request.app.state.repo
+    user = repo.get_user(entry["user_id"])
+    if not user or not user.get("is_active"):
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Account disabled")
+    repo.record_login(user["id"], success=True)
+    repo.audit(user["id"], "user.login_2fa", {})
+    return issue_token(request, user)
+
+
+@router.post("/resend-2fa")
+def resend_2fa(body: Resend2FARequest, request: Request) -> dict[str, Any]:
+    entry = _pending_2fa.get(body.verification_id)
+    if not entry:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Session expired. Please log in again.")
+    if body.phone_number and body.phone_number.strip():
+        entry["phone"] = body.phone_number.strip()
+    code = generate_otp_code(6)
+    entry["code"] = code
+    entry["expires_at"] = time.time() + 300
+    entry["attempts"] = 0
+    settings = request.app.state.settings
+    sms_res = send_sms_otp(
+        to_phone=entry["phone"],
+        code=code,
+        account_sid=settings.twilio_account_sid,
+        auth_token=settings.twilio_auth_token,
+        from_number=settings.twilio_phone_number,
+    )
+    dev_code = code if sms_res.get("simulated") else None
+    return {
+        "success": True,
+        "phone_masked": mask_phone_number(entry["phone"]),
+        "dev_code": dev_code,
+        "message": f"Fresh verification code sent via Twilio SMS to {mask_phone_number(entry['phone'])}",
+    }
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)

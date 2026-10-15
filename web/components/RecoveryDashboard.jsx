@@ -80,8 +80,8 @@ export default function RecoveryDashboard() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">{scanId ? 'Recovery session' : 'Recover deleted files'}</h1>
-          <p className="mt-1 text-sm text-slate-500">NTFS and FAT32 hard disk drives on Windows 10/11 - read-only scanning.</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{scanId ? 'Recovery session' : 'Recover deleted files'}</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">NTFS and FAT32 hard disk drives on Windows 10/11 - read-only scanning.</p>
         </div>
         {scanId && <button type="button" className="btn-secondary" onClick={() => openScan(null)}><Icon name="search" /> New scan</button>}
       </div>
@@ -115,11 +115,13 @@ function StepHeader({ step, setStep, canGo }) {
       {steps.map((s, i) => (
         <li key={s}>
           <button type="button" disabled={!canGo(i)} onClick={() => setStep(i)}
-            className={classNames('flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium',
-              i === step ? 'bg-brand-600 text-white' : i < step ? 'bg-brand-50 text-brand-700' : 'bg-slate-100 text-slate-500',
+            className={classNames('flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+              i === step ? 'bg-brand-600 text-white shadow-sm'
+                : i < step ? 'bg-brand-50 text-brand-700 dark:bg-brand-950/70 dark:text-brand-300 dark:border dark:border-brand-800/40'
+                : 'bg-slate-100 text-slate-500 dark:bg-slate-800/90 dark:text-slate-400',
               'disabled:cursor-not-allowed')}>
-            <span className={classNames('flex h-5 w-5 items-center justify-center rounded-full text-xs',
-              i === step ? 'bg-white/20' : 'bg-white')}>{i < step ? <Icon name="check" className="h-3 w-3" /> : i + 1}</span>
+            <span className={classNames('flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold',
+              i === step ? 'bg-white/20' : 'bg-white text-slate-700 dark:bg-slate-900 dark:text-slate-300')}>{i < step ? <Icon name="check" className="h-3 w-3" /> : i + 1}</span>
             {s}
           </button>
         </li>
@@ -222,25 +224,27 @@ function ScanWizard({ system, onStarted }) {
         {/* ---------------------------------------------------------------- step 1 */}
         {step === 0 && (
           <div>
-            <h2 className="text-lg font-semibold">What happened to your files?</h2>
-            <p className="mt-1 text-sm text-slate-500">The scenario helper picks the right scan for you. You can change everything later.</p>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">What happened to your files?</h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">The scenario helper picks the right scan for you. You can change everything later.</p>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               {SCENARIOS.map((s) => (
                 <button key={s.id} type="button" onClick={() => pickScenario(s.id)}
-                  className={classNames('rounded-xl border p-4 text-left transition hover:border-brand-400 hover:shadow',
-                    scenario === s.id ? 'border-brand-500 ring-2 ring-brand-100' : 'border-slate-200')}>
-                  <div className="flex items-center gap-2 font-semibold text-slate-900">
-                    <span className="rounded-lg bg-brand-50 p-1.5 text-brand-600"><Icon name={s.icon} /></span>{s.title}
+                  className={classNames('rounded-xl border p-4 text-left transition hover:border-brand-400 dark:hover:border-brand-500 hover:shadow dark:hover:shadow-black/30',
+                    scenario === s.id ? 'border-brand-500 ring-2 ring-brand-100 dark:ring-brand-950 dark:border-brand-500 bg-brand-50/30 dark:bg-brand-950/30' : 'border-slate-200 dark:border-slate-800 dark:bg-slate-900/50')}>
+                  <div className="flex items-center gap-2 font-semibold text-slate-900 dark:text-white">
+                    <span className="rounded-lg bg-brand-50 dark:bg-brand-950/80 p-1.5 text-brand-600 dark:text-indigo-400"><Icon name={s.icon} /></span>{s.title}
                     <Badge tone={s.mode === 'quick' ? 'green' : 'purple'}>{s.mode === 'quick' ? 'Quick Scan' : 'Deep Scan'}</Badge>
                   </div>
-                  <p className="mt-2 text-sm text-slate-600">{s.text}</p>
-                  <p className="mt-1 text-xs text-slate-500">{s.tip}</p>
+                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{s.text}</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{s.tip}</p>
                 </button>
               ))}
             </div>
-            <Alert tone="warning" title="Stop using the affected drive now">
-              Every file you save, download or install may overwrite deleted data. Never install this software or save recovered files on the drive you are recovering from.
-            </Alert>
+            <div className="mt-4">
+              <Alert tone="warning" title="Stop using the affected drive now">
+                Every file you save, download or install may overwrite deleted data. Never install this software or save recovered files on the drive you are recovering from.
+              </Alert>
+            </div>
           </div>
         )}
 
@@ -248,7 +252,7 @@ function ScanWizard({ system, onStarted }) {
         {step === 1 && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-lg font-semibold">What should be scanned?</h2>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">What should be scanned?</h2>
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 {[
                   { id: 'all', title: 'All drives', text: 'Every HDD and partition that is connected', icon: 'layers' },
@@ -256,9 +260,12 @@ function ScanWizard({ system, onStarted }) {
                   { id: 'folder', title: 'Single folder', text: 'Only files deleted from one folder', icon: 'folder' },
                 ].map((o) => (
                   <button key={o.id} type="button" onClick={() => setScope(o.id)}
-                    className={classNames('rounded-xl border p-3 text-left', scope === o.id ? 'border-brand-500 ring-2 ring-brand-100' : 'border-slate-200 hover:border-slate-300')}>
-                    <div className="flex items-center gap-2 font-medium"><Icon name={o.icon} />{o.title}</div>
-                    <div className="mt-1 text-xs text-slate-500">{o.text}</div>
+                    className={classNames('rounded-xl border p-3 text-left transition',
+                      scope === o.id
+                        ? 'border-brand-500 ring-2 ring-brand-100 dark:ring-brand-950 dark:border-brand-500 bg-brand-50/20 dark:bg-brand-950/30'
+                        : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 dark:bg-slate-900/50')}>
+                    <div className="flex items-center gap-2 font-medium text-slate-900 dark:text-white"><Icon name={o.icon} />{o.title}</div>
+                    <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">{o.text}</div>
                   </button>
                 ))}
               </div>
@@ -315,7 +322,7 @@ function ScanWizard({ system, onStarted }) {
         {/* ---------------------------------------------------------------- step 3 */}
         {step === 2 && (
           <div className="space-y-5">
-            <h2 className="text-lg font-semibold">How deep should we look?</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">How deep should we look?</h2>
             <div className="grid gap-3 md:grid-cols-2">
               <ModeCard active={mode === 'quick'} onClick={() => setMode('quick')} title="Quick Scan (MFT)" badge="Minutes"
                 points={['Reads the NTFS Master File Table / FAT directories', 'Keeps original file names and folders', 'Detects whether clusters were overwritten', 'Best for recently deleted files']} />
@@ -323,18 +330,20 @@ function ScanWizard({ system, onStarted }) {
                 points={['Reads every sector looking for file signatures', 'Works after formatting or corruption', 'Names are rebuilt from content (smart naming)', 'Finds JPEG, PNG, PDF, DOCX/XLSX, ZIP, MP4, ...']} />
             </div>
             <div>
-              <div className="label">File types <span className="font-normal text-slate-500">(leave empty for all types)</span></div>
+              <div className="label">File types <span className="font-normal text-slate-500 dark:text-slate-400">(leave empty for all types)</span></div>
               <div className="space-y-2">
                 {TYPE_GROUPS.map((g) => (
                   <div key={g.label} className="flex flex-wrap items-center gap-1.5">
-                    <button type="button" className="w-28 text-left text-xs font-semibold text-slate-600 hover:text-brand-600"
+                    <button type="button" className="w-28 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400"
                       onClick={() => setTypes(g.types.every((t) => types.includes(t)) ? types.filter((t) => !g.types.includes(t)) : [...new Set([...types, ...g.types])])}>
                       {g.label}
                     </button>
                     {g.types.map((t) => (
                       <button key={t} type="button" onClick={() => toggle(types, setTypes, t)}
-                        className={classNames('rounded-full border px-2.5 py-0.5 text-xs font-medium',
-                          types.includes(t) ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-slate-200 text-slate-600 hover:border-slate-300')}>
+                        className={classNames('rounded-full border px-2.5 py-0.5 text-xs font-medium transition',
+                          types.includes(t)
+                            ? 'border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-950/80 dark:text-brand-300 dark:border-brand-800'
+                            : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600')}>
                         .{t}
                       </button>
                     ))}
@@ -343,9 +352,9 @@ function ScanWizard({ system, onStarted }) {
               </div>
             </div>
             {mode === 'deep' && scope !== 'folder' && (
-              <label className="flex items-start gap-2 text-sm">
+              <label className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
                 <input type="checkbox" className="mt-1" checked={unallocatedOnly} onChange={(e) => setUnallocatedOnly(e.target.checked)} />
-                <span>Only carve free (unallocated) space<span className="block text-xs text-slate-500">Faster and skips existing files. Uses the NTFS $Bitmap / FAT table when it is readable.</span></span>
+                <span>Only carve free (unallocated) space<span className="block text-xs text-slate-500 dark:text-slate-400">Faster and skips existing files. Uses the NTFS $Bitmap / FAT table when it is readable.</span></span>
               </label>
             )}
             <div className="flex justify-between">
@@ -358,8 +367,8 @@ function ScanWizard({ system, onStarted }) {
         {/* ---------------------------------------------------------------- step 4 */}
         {step === 3 && (
           <div className="space-y-5">
-            <h2 className="text-lg font-semibold">Review and start</h2>
-            <dl className="grid gap-x-6 gap-y-2 rounded-lg bg-slate-50 p-4 text-sm sm:grid-cols-2">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Review and start</h2>
+            <dl className="grid gap-x-6 gap-y-2 rounded-lg bg-slate-50 dark:bg-slate-800/60 p-4 text-sm sm:grid-cols-2 border border-slate-200/60 dark:border-slate-700/60">
               <Row k="Scenario" v={SCENARIOS.find((s) => s.id === scenario).title} />
               <Row k="Scan mode" v={mode === 'quick' ? 'Quick Scan (MFT / FAT metadata)' : 'Deep Scan (sector-by-sector carving)'} />
               <Row k="Target" v={scope === 'all' ? 'All connected HDDs' : scope === 'folder' ? folderPath : sources.join(', ')} />
@@ -372,7 +381,7 @@ function ScanWizard({ system, onStarted }) {
               <label className="label" htmlFor="label">Session name (optional)</label>
               <input id="label" className="input" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Holiday photos from D:" maxLength={120} />
             </div>
-            <label className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+            <label className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-200">
               <input type="checkbox" className="mt-1" checked={ack} onChange={(e) => setAck(e.target.checked)} />
               <span>I understand that scanning is read-only, and that I must restore files to a <strong>different physical drive</strong> than the one being scanned.</span>
             </label>
@@ -396,8 +405,8 @@ function ScanWizard({ system, onStarted }) {
 function Row({ k, v }) {
   return (
     <div className="flex gap-2">
-      <dt className="w-32 flex-none text-slate-500">{k}</dt>
-      <dd className="font-medium text-slate-800">{v}</dd>
+      <dt className="w-32 flex-none text-slate-500 dark:text-slate-400">{k}</dt>
+      <dd className="font-medium text-slate-800 dark:text-slate-200">{v}</dd>
     </div>
   );
 }
@@ -405,11 +414,14 @@ function Row({ k, v }) {
 function ModeCard({ active, onClick, title, badge, points }) {
   return (
     <button type="button" onClick={onClick}
-      className={classNames('rounded-xl border p-4 text-left', active ? 'border-brand-500 ring-2 ring-brand-100' : 'border-slate-200 hover:border-slate-300')}>
+      className={classNames('rounded-xl border p-4 text-left transition',
+        active
+          ? 'border-brand-500 ring-2 ring-brand-100 dark:ring-brand-950 dark:border-brand-500 bg-brand-50/20 dark:bg-brand-950/30'
+          : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 dark:bg-slate-900/50')}>
       <div className="flex items-center justify-between">
-        <span className="font-semibold">{title}</span><Badge tone="slate">{badge}</Badge>
+        <span className="font-semibold text-slate-900 dark:text-white">{title}</span><Badge tone="slate">{badge}</Badge>
       </div>
-      <ul className="mt-2 space-y-1 text-sm text-slate-600">
+      <ul className="mt-2 space-y-1 text-sm text-slate-600 dark:text-slate-300">
         {points.map((p) => <li key={p} className="flex gap-2"><Icon name="check" className="mt-0.5 h-4 w-4 flex-none text-emerald-500" />{p}</li>)}
       </ul>
     </button>
@@ -425,40 +437,40 @@ function DriveSelector({ drives, scope, selected, onToggle, mode }) {
         const vols = volumesOf(d.index);
         const unmounted = d.partitions.filter((p) => !p.mounted_letter);
         return (
-          <div key={d.index} className="rounded-xl border border-slate-200">
-            <div className="flex flex-wrap items-center gap-2 border-b border-slate-100 px-4 py-2.5">
-              <Icon name="drive" className="h-5 w-5 text-slate-500" />
-              <span className="font-medium">Disk {d.index}: {d.model || 'Unknown model'}</span>
+          <div key={d.index} className="rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-900/40">
+            <div className="flex flex-wrap items-center gap-2 border-b border-slate-100 dark:border-slate-800/80 px-4 py-2.5">
+              <Icon name="drive" className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+              <span className="font-medium text-slate-900 dark:text-slate-100">Disk {d.index}: {d.model || 'Unknown model'}</span>
               <Badge tone={d.media_type === 'HDD' ? 'green' : d.media_type === 'SSD' ? 'amber' : 'slate'}>{d.media_type}</Badge>
               <Badge>{d.bus_type}</Badge>
-              <span className="text-sm text-slate-500">{formatBytes(d.size_bytes)} · {d.partition_style}</span>
+              <span className="text-sm text-slate-500 dark:text-slate-400">{formatBytes(d.size_bytes)} · {d.partition_style}</span>
               {scope === 'drive' && (
-                <label className="ml-auto flex items-center gap-2 text-sm">
+                <label className="ml-auto flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
                   <input type="checkbox" checked={selected.includes(d.device_path)} onChange={() => onToggle(d.device_path)} />
                   Whole disk{mode === 'deep' ? ' (recommended for Deep Scan)' : ''}
                 </label>
               )}
             </div>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
               {vols.map((v) => (
-                <label key={v.letter} className={classNames('flex items-center gap-3 px-4 py-2.5 text-sm', scope === 'drive' && 'cursor-pointer hover:bg-slate-50')}>
+                <label key={v.letter} className={classNames('flex items-center gap-3 px-4 py-2.5 text-sm', scope === 'drive' && 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50')}>
                   {scope === 'drive' ? <input type="checkbox" checked={selected.includes(v.source_spec)} onChange={() => onToggle(v.source_spec)} />
-                    : <Icon name="check" className={classNames('h-4 w-4', d.media_type === 'SSD' ? 'text-slate-300' : 'text-emerald-500')} />}
-                  <span className="w-10 font-mono font-semibold">{v.letter}</span>
-                  <span className="flex-1 truncate">{v.label || 'Local Disk'}</span>
+                    : <Icon name="check" className={classNames('h-4 w-4', d.media_type === 'SSD' ? 'text-slate-300 dark:text-slate-600' : 'text-emerald-500')} />}
+                  <span className="w-10 font-mono font-semibold text-slate-900 dark:text-slate-100">{v.letter}</span>
+                  <span className="flex-1 truncate text-slate-800 dark:text-slate-200">{v.label || 'Local Disk'}</span>
                   <Badge tone={v.filesystem === 'RAW' ? 'red' : 'blue'}>{v.filesystem}</Badge>
                   {v.is_system_volume && <Badge tone="amber">Windows</Badge>}
-                  <span className="hidden w-48 text-right text-slate-500 sm:block">{formatBytes(v.total_bytes - v.free_bytes)} used of {formatBytes(v.total_bytes)}</span>
+                  <span className="hidden w-48 text-right text-slate-500 dark:text-slate-400 sm:block">{formatBytes(v.total_bytes - v.free_bytes)} used of {formatBytes(v.total_bytes)}</span>
                 </label>
               ))}
               {unmounted.map((p) => (
-                <label key={p.source_spec} className={classNames('flex items-center gap-3 px-4 py-2.5 text-sm', scope === 'drive' && 'cursor-pointer hover:bg-slate-50')}>
+                <label key={p.source_spec} className={classNames('flex items-center gap-3 px-4 py-2.5 text-sm', scope === 'drive' && 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50')}>
                   {scope === 'drive' ? <input type="checkbox" checked={selected.includes(p.source_spec)} onChange={() => onToggle(p.source_spec)} />
                     : <Icon name="check" className="h-4 w-4 text-emerald-500" />}
                   <span className="w-10 font-mono text-slate-400">--</span>
-                  <span className="flex-1 truncate">Partition {p.number} · {p.type_label}</span>
+                  <span className="flex-1 truncate text-slate-700 dark:text-slate-300">Partition {p.number} · {p.type_label}</span>
                   <Badge tone="red">No drive letter</Badge>
-                  <span className="hidden w-48 text-right text-slate-500 sm:block">{formatBytes(p.length_bytes)}</span>
+                  <span className="hidden w-48 text-right text-slate-500 dark:text-slate-400 sm:block">{formatBytes(p.length_bytes)}</span>
                 </label>
               ))}
             </div>
@@ -528,8 +540,8 @@ function ScanWorkspace({ scanId, onNewScan }) {
     <div className="space-y-6">
       <div className="card flex flex-wrap items-center gap-3 p-4">
         <div className="min-w-0 flex-1">
-          <div className="truncate font-semibold text-slate-900">{scan.label}</div>
-          <div className="mt-0.5 text-xs text-slate-500">
+          <div className="truncate font-semibold text-slate-900 dark:text-white">{scan.label}</div>
+          <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
             {scan.mode === 'quick' ? 'Quick Scan' : 'Deep Scan'} · {scan.target_scope === 'all' ? 'All drives' : scan.target_scope === 'folder' ? scan.folder_path : scan.sources.join(', ')} · started {formatDate(scan.started_at || scan.created_at)}
           </div>
         </div>
@@ -560,8 +572,8 @@ function ProgressPanel({ scan, onCancel, cancelling }) {
     <div className="card p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <div className="text-sm font-medium text-slate-500">{PHASES[p.phase] || p.phase || 'Working'}</div>
-          <div className="text-3xl font-bold text-slate-900">{Number(p.overall_percent || 0).toFixed(1)}%</div>
+          <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{PHASES[p.phase] || p.phase || 'Working'}</div>
+          <div className="text-3xl font-bold text-slate-900 dark:text-white">{Number(p.overall_percent || 0).toFixed(1)}%</div>
         </div>
         <button type="button" className="btn-danger" onClick={onCancel} disabled={cancelling || scan.status === 'analyzing'}>
           {cancelling ? <Spinner /> : <Icon name="x" />} {cancelling ? 'Stopping…' : 'Cancel scan'}
@@ -578,7 +590,7 @@ function ProgressPanel({ scan, onCancel, cancelling }) {
       {p.read_errors > 0 && (
         <Alert tone="warning" title={`${p.read_errors} unreadable sector(s)`}>The drive may be failing. Let the scan finish, then restore the most important files first.</Alert>
       )}
-      <div className="mt-4 rounded-lg bg-slate-900 p-3 font-mono text-xs leading-5 text-slate-200">
+      <div className="mt-4 rounded-lg bg-slate-900 dark:bg-black/80 dark:border dark:border-slate-800 p-3 font-mono text-xs leading-5 text-slate-200">
         {p.message && <div className="text-emerald-300">› {p.message}</div>}
         {log.slice(-8).map((l, i) => (
           <div key={`${l.ts}-${i}`} className={l.level === 'error' ? 'text-red-300' : l.level === 'warning' ? 'text-amber-300' : ''}>
@@ -586,17 +598,17 @@ function ProgressPanel({ scan, onCancel, cancelling }) {
           </div>
         ))}
       </div>
-      <p className="mt-3 text-xs text-slate-500">You can leave this page; the scan keeps running and is listed under History.</p>
+      <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">You can leave this page; the scan keeps running and is listed under History.</p>
     </div>
   );
 }
 
 function Metric({ label, value, hint }) {
   return (
-    <div className="rounded-lg bg-slate-50 p-3">
-      <div className="text-xs text-slate-500">{label}</div>
-      <div className="font-semibold text-slate-900">{value}</div>
-      {hint && <div className="truncate text-xs text-slate-400">{hint}</div>}
+    <div className="rounded-lg bg-slate-50 dark:bg-slate-800/60 dark:border dark:border-slate-700/60 p-3">
+      <div className="text-xs text-slate-500 dark:text-slate-400">{label}</div>
+      <div className="font-semibold text-slate-900 dark:text-white">{value}</div>
+      {hint && <div className="truncate text-xs text-slate-400 dark:text-slate-500">{hint}</div>}
     </div>
   );
 }
@@ -708,14 +720,16 @@ function ResultsPanel({ scan }) {
 
       {clusters.length > 0 && (
         <div className="card p-4">
-          <div className="mb-2 text-sm font-semibold text-slate-700">Deletion events (files that were stored next to each other)</div>
+          <div className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Deletion events (files that were stored next to each other)</div>
           <div className="flex flex-wrap gap-2">
             {clusters.map((c) => (
               <button key={c.id} type="button" onClick={() => setFilter('cluster_id', filters.cluster_id === c.id ? '' : c.id)}
-                className={classNames('rounded-lg border px-3 py-1.5 text-left text-xs',
-                  filters.cluster_id === c.id ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-slate-200 hover:border-slate-300')}>
-                <div className="font-semibold">{c.label.split(':')[0]}</div>
-                <div className="text-slate-500">{c.file_count} files · .{c.dominant_extension} · {formatBytes(c.total_bytes)}{c.time_start ? ` · ${formatDate(c.time_start)}` : ''}</div>
+                className={classNames('rounded-lg border px-3 py-1.5 text-left text-xs transition',
+                  filters.cluster_id === c.id
+                    ? 'border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-950/80 dark:text-brand-300 dark:border-brand-800'
+                    : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 dark:bg-slate-900/50')}>
+                <div className="font-semibold text-slate-900 dark:text-white">{c.label.split(':')[0]}</div>
+                <div className="text-slate-500 dark:text-slate-400">{c.file_count} files · .{c.dominant_extension} · {formatBytes(c.total_bytes)}{c.time_start ? ` · ${formatDate(c.time_start)}` : ''}</div>
               </button>
             ))}
           </div>
@@ -724,7 +738,7 @@ function ResultsPanel({ scan }) {
 
       <div className="card">
         {/* toolbar */}
-        <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 p-4">
+        <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 dark:border-slate-800 p-4">
           <div className="relative min-w-[220px] flex-1">
             <Icon name="search" className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
             <input className="input pl-9" placeholder="Search names and folders…" value={filters.q} onChange={(e) => setFilter('q', e.target.value)} />
@@ -732,8 +746,10 @@ function ResultsPanel({ scan }) {
           <div className="flex gap-1">
             {['high', 'medium', 'low'].map((c) => (
               <button key={c} type="button" onClick={() => toggleIn('confidence', c)}
-                className={classNames('rounded-full border px-3 py-1 text-xs font-semibold capitalize',
-                  filters.confidence.includes(c) ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-slate-200 text-slate-600')}>
+                className={classNames('rounded-full border px-3 py-1 text-xs font-semibold capitalize transition',
+                  filters.confidence.includes(c)
+                    ? 'border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-950/80 dark:text-brand-300 dark:border-brand-800'
+                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600')}>
                 {c}
               </button>
             ))}
@@ -752,32 +768,34 @@ function ResultsPanel({ scan }) {
           </button>
         </div>
         {extOptions.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-100 px-4 py-2">
-            <span className="mr-1 text-xs font-medium text-slate-500">Type:</span>
+          <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-100 dark:border-slate-800/80 px-4 py-2">
+            <span className="mr-1 text-xs font-medium text-slate-500 dark:text-slate-400">Type:</span>
             {extOptions.map(([ext, n]) => (
               <button key={ext} type="button" onClick={() => toggleIn('extension', ext)}
-                className={classNames('rounded-full border px-2.5 py-0.5 text-xs',
-                  filters.extension.includes(ext) ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-slate-200 text-slate-600 hover:border-slate-300')}>
-                .{ext} <span className="text-slate-400">{n}</span>
+                className={classNames('rounded-full border px-2.5 py-0.5 text-xs transition',
+                  filters.extension.includes(ext)
+                    ? 'border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-950/80 dark:text-brand-300 dark:border-brand-800'
+                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600')}>
+                .{ext} <span className="text-slate-400 dark:text-slate-500">{n}</span>
               </button>
             ))}
             {(filters.extension.length > 0 || filters.confidence.length > 0 || filters.cluster_id || filters.method || filters.q) && (
-              <button type="button" className="ml-2 text-xs font-medium text-brand-600 hover:underline"
+              <button type="button" className="ml-2 text-xs font-medium text-brand-600 hover:underline dark:text-indigo-400 dark:hover:text-indigo-300"
                 onClick={() => setFilters({ q: '', extension: [], confidence: [], cluster_id: '', method: '' })}>Clear filters</button>
             )}
           </div>
         )}
         {report.error && <div className="p-4"><Alert tone="danger" onClose={() => setReport({ ...report, error: null })}>{report.error}</Alert></div>}
         {selected.size > 0 && (
-          <div className="flex flex-wrap items-center gap-3 bg-brand-50 px-4 py-2 text-sm text-brand-900">
+          <div className="flex flex-wrap items-center gap-3 bg-brand-50 dark:bg-brand-950/70 border-y border-brand-200 dark:border-brand-900/50 px-4 py-2 text-sm text-brand-900 dark:text-brand-200">
             <span><strong>{selected.size.toLocaleString()}</strong> selected ({formatBytes(selectedBytes)})</span>
             <button type="button" className="font-medium underline" onClick={() => setSelected(new Map())}>Clear selection</button>
           </div>
         )}
         {data && allOnPage && data.total > items.length && (
-          <div className="bg-slate-50 px-4 py-2 text-sm text-slate-600">
+          <div className="bg-slate-50 dark:bg-slate-800/60 border-y border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-600 dark:text-slate-300">
             All {items.length} files on this page are selected.{' '}
-            <button type="button" className="font-medium text-brand-600 underline" onClick={selectAllMatching} disabled={selectingAll}>
+            <button type="button" className="font-medium text-brand-600 dark:text-indigo-400 underline" onClick={selectAllMatching} disabled={selectingAll}>
               {selectingAll ? 'Selecting…' : `Select all ${data.total.toLocaleString()} matching files`}
             </button>
           </div>
@@ -787,38 +805,38 @@ function ResultsPanel({ scan }) {
         {error && <div className="p-4"><Alert tone="danger">{error}</Alert></div>}
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
-            <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <thead className="bg-slate-50 dark:bg-slate-900/90 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
               <tr>
-                <th className="w-10 px-4 py-2"><input type="checkbox" checked={allOnPage} onChange={togglePage} aria-label="Select page" /></th>
+                <th className="w-10 px-4 py-2.5"><input type="checkbox" checked={allOnPage} onChange={togglePage} aria-label="Select page" /></th>
                 <SortTh col="name" sort={sort} onSort={toggleSort}>Name</SortTh>
-                <th className="px-3 py-2">Original location</th>
+                <th className="px-3 py-2.5">Original location</th>
                 <SortTh col="extension" sort={sort} onSort={toggleSort}>Type</SortTh>
                 <SortTh col="size" sort={sort} onSort={toggleSort} right>Size</SortTh>
                 <SortTh col="confidence" sort={sort} onSort={toggleSort}>Recovery chance</SortTh>
-                <th className="px-3 py-2">Modified</th>
-                <th className="px-3 py-2" />
+                <th className="px-3 py-2.5">Modified</th>
+                <th className="px-3 py-2.5" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
               {items.map((f) => (
-                <tr key={f.id} className={classNames('hover:bg-slate-50', selected.has(f.id) && 'bg-brand-50/40')}>
-                  <td className="px-4 py-2"><input type="checkbox" checked={selected.has(f.id)} onChange={() => toggleOne(f)} aria-label={`Select ${f.display_name}`} /></td>
-                  <td className="max-w-xs px-3 py-2">
-                    <div className="truncate font-medium text-slate-900" title={f.display_name}>{f.display_name}</div>
+                <tr key={f.id} className={classNames('transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50', selected.has(f.id) && 'bg-brand-50/40 dark:bg-brand-950/40')}>
+                  <td className="px-4 py-2.5"><input type="checkbox" checked={selected.has(f.id)} onChange={() => toggleOne(f)} aria-label={`Select ${f.display_name}`} /></td>
+                  <td className="max-w-xs px-3 py-2.5">
+                    <div className="truncate font-medium text-slate-900 dark:text-slate-100" title={f.display_name}>{f.display_name}</div>
                     {f.suggested_name && f.file_name && f.suggested_name !== f.file_name && (
-                      <div className="truncate text-xs text-slate-500" title="Suggested from content">Suggested: {f.suggested_name}</div>
+                      <div className="truncate text-xs text-slate-500 dark:text-slate-400" title="Suggested from content">Suggested: {f.suggested_name}</div>
                     )}
-                    {!f.file_name && <div className="text-xs text-violet-600">Name rebuilt from content</div>}
+                    {!f.file_name && <div className="text-xs text-violet-600 dark:text-violet-400">Name rebuilt from content</div>}
                     {f.restored && <Badge tone="green">restored</Badge>}
                   </td>
-                  <td className="max-w-xs truncate px-3 py-2 font-mono text-xs text-slate-500" title={f.original_path || ''}>
-                    {f.original_path || <span className="font-sans italic">unknown (carved at LBA {f.absolute_lba.toLocaleString()})</span>}
+                  <td className="max-w-xs truncate px-3 py-2.5 font-mono text-xs text-slate-500 dark:text-slate-400" title={f.original_path || ''}>
+                    {f.original_path || <span className="font-sans italic text-slate-400 dark:text-slate-500">unknown (carved at LBA {f.absolute_lba.toLocaleString()})</span>}
                   </td>
-                  <td className="px-3 py-2"><Badge>.{f.extension || '?'}</Badge></td>
-                  <td className="whitespace-nowrap px-3 py-2 text-right tabular-nums">{formatBytes(f.size_bytes)}</td>
-                  <td className="px-3 py-2"><ConfidenceBadge level={f.confidence} score={f.confidence_score} reasons={f.confidence_reasons} /></td>
-                  <td className="whitespace-nowrap px-3 py-2 text-xs text-slate-500">{formatDate(f.timestamps && f.timestamps.modified)}</td>
-                  <td className="px-3 py-2 text-right">
+                  <td className="px-3 py-2.5"><Badge>.{f.extension || '?'}</Badge></td>
+                  <td className="whitespace-nowrap px-3 py-2.5 text-right tabular-nums text-slate-700 dark:text-slate-200">{formatBytes(f.size_bytes)}</td>
+                  <td className="px-3 py-2.5"><ConfidenceBadge level={f.confidence} score={f.confidence_score} reasons={f.confidence_reasons} /></td>
+                  <td className="whitespace-nowrap px-3 py-2.5 text-xs text-slate-500 dark:text-slate-400">{formatDate(f.timestamps && f.timestamps.modified)}</td>
+                  <td className="px-3 py-2.5 text-right">
                     <button type="button" className="btn-ghost px-2 py-1 text-xs" onClick={() => setPreview(f)}><Icon name="eye" /> Preview</button>
                   </td>
                 </tr>
@@ -833,8 +851,8 @@ function ResultsPanel({ scan }) {
           )}
         </div>
         {data && data.total > 0 && (
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-4 py-3 text-sm">
-            <span className="text-slate-500">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 dark:border-slate-800 px-4 py-3 text-sm">
+            <span className="text-slate-500 dark:text-slate-400">
               {((data.page - 1) * data.page_size + 1).toLocaleString()}–{Math.min(data.page * data.page_size, data.total).toLocaleString()} of {data.total.toLocaleString()}
               {loading && <Spinner className="ml-2 inline h-3 w-3" />}
             </span>
@@ -902,18 +920,18 @@ function PreviewModal({ scanId, file, onClose, onRestore }) {
       </>}>
       <div className="grid gap-5 md:grid-cols-5">
         <div className="md:col-span-3">
-          <div className="flex min-h-[220px] items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
-            {error && <div className="p-4 text-sm text-red-600">{error}</div>}
+          <div className="flex min-h-[220px] items-center justify-center overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+            {error && <div className="p-4 text-sm text-red-600 dark:text-red-400">{error}</div>}
             {!preview && !error && <Spinner className="h-6 w-6 text-slate-400" />}
             {preview && img && <img src={img} alt={`Preview of ${file.display_name}`} className="max-h-[420px] w-auto object-contain" />}
             {preview && !img && preview.text_excerpt && (
-              <pre className="max-h-[420px] w-full overflow-auto whitespace-pre-wrap p-4 text-left text-xs leading-5 text-slate-700">{preview.text_excerpt}</pre>
+              <pre className="max-h-[420px] w-full overflow-auto whitespace-pre-wrap p-4 text-left text-xs leading-5 text-slate-700 dark:text-slate-200">{preview.text_excerpt}</pre>
             )}
-            {preview && !img && !preview.text_excerpt && <div className="p-6 text-center text-sm text-slate-500">{preview.message || 'No preview available.'}</div>}
+            {preview && !img && !preview.text_excerpt && <div className="p-6 text-center text-sm text-slate-500 dark:text-slate-400">{preview.message || 'No preview available.'}</div>}
           </div>
           {preview && preview.keywords && preview.keywords.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-1.5">
-              <span className="text-xs font-medium text-slate-500">Keywords:</span>
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Keywords:</span>
               {preview.keywords.map((k) => <Badge key={k} tone="purple">{k}</Badge>)}
             </div>
           )}
@@ -921,8 +939,8 @@ function PreviewModal({ scanId, file, onClose, onRestore }) {
         <div className="space-y-4 md:col-span-2">
           <div>
             <ConfidenceBadge level={file.confidence} score={file.confidence_score} />
-            <ul className="mt-2 space-y-1 text-xs text-slate-600">
-              {(file.confidence_reasons || []).map((r) => <li key={r} className="flex gap-1.5"><span className="text-slate-400">•</span>{r}</li>)}
+            <ul className="mt-2 space-y-1 text-xs text-slate-600 dark:text-slate-300">
+              {(file.confidence_reasons || []).map((r) => <li key={r} className="flex gap-1.5"><span className="text-slate-400 dark:text-slate-500">•</span>{r}</li>)}
             </ul>
           </div>
           <dl className="space-y-1.5 text-xs">
@@ -946,8 +964,8 @@ function PreviewModal({ scanId, file, onClose, onRestore }) {
 function Detail({ k, v, mono }) {
   return (
     <div className="flex gap-2">
-      <dt className="w-28 flex-none text-slate-500">{k}</dt>
-      <dd className={classNames('min-w-0 break-all text-slate-800', mono && 'font-mono')}>{v}</dd>
+      <dt className="w-28 flex-none text-slate-500 dark:text-slate-400">{k}</dt>
+      <dd className={classNames('min-w-0 break-all text-slate-800 dark:text-slate-100', mono && 'font-mono')}>{v}</dd>
     </div>
   );
 }
@@ -1029,33 +1047,33 @@ function RestoreDialog({ scan, files, onClose }) {
           <div>
             <label className="label" htmlFor="dest">Destination folder</label>
             <input id="dest" className="input font-mono" value={destination} onChange={(e) => setDestination(e.target.value)} />
-            <p className="mt-1 text-xs text-slate-500">The folder is created if it does not exist. Existing files are never overwritten.</p>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">The folder is created if it does not exist. Existing files are never overwritten.</p>
           </div>
-          <label className="flex items-start gap-2 text-sm">
+          <label className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
             <input type="checkbox" className="mt-1" checked={smartNames} onChange={(e) => setSmartNames(e.target.checked)} />
-            <span>Use smart names for files without an original name<span className="block text-xs text-slate-500">e.g. carved file → Financial_Report_2026.pdf, Photo_2025-07-08_iPhone_13.jpg</span></span>
+            <span>Use smart names for files without an original name<span className="block text-xs text-slate-500 dark:text-slate-400">e.g. carved file → Financial_Report_2026.pdf, Photo_2025-07-08_iPhone_13.jpg</span></span>
           </label>
-          <label className="flex items-start gap-2 text-sm">
+          <label className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
             <input type="checkbox" className="mt-1" checked={preservePaths} onChange={(e) => setPreservePaths(e.target.checked)} />
-            <span>Recreate the original folder structure<span className="block text-xs text-slate-500">Carved files go to Carved\&lt;TYPE&gt;\</span></span>
+            <span>Recreate the original folder structure<span className="block text-xs text-slate-500 dark:text-slate-400">Carved files go to Carved\&lt;TYPE&gt;\</span></span>
           </label>
           {lowCount > 0 && <Alert tone="warning">{lowCount} selected file(s) have a low recovery chance and may be damaged.</Alert>}
           {check && (
             <Alert tone={check.safe ? 'success' : 'danger'} title={check.safe ? 'Destination is safe' : 'Destination is not safe'}>
               {check.conflicts.map((c) => <div key={c}>{c}</div>)}
-              {check.warnings.map((w) => <div key={w} className="text-amber-800">{w}</div>)}
+              {check.warnings.map((w) => <div key={w} className="text-amber-800 dark:text-amber-200">{w}</div>)}
               {check.safe && check.free_bytes > 0 && <div>{formatBytes(check.free_bytes)} free on {check.destination_volume_root}</div>}
             </Alert>
           )}
-          {!check && <p className="text-xs text-slate-500">Check the destination first - the guard compares volume GUIDs and physical disks with the scanned sources.</p>}
+          {!check && <p className="text-xs text-slate-500 dark:text-slate-400">Check the destination first - the guard compares volume GUIDs and physical disks with the scanned sources.</p>}
           {error && <Alert tone="danger">{error}</Alert>}
         </div>
       )}
       {job && (
         <div className="space-y-4">
           <div className="flex items-center justify-between text-sm">
-            <span className="font-medium">{running ? 'Restoring files…' : `Restore ${job.status}`}</span>
-            <span className="tabular-nums text-slate-500">{job.restored_files} ok · {job.failed_files} failed · {formatBytes(job.bytes_written)}</span>
+            <span className="font-medium text-slate-900 dark:text-white">{running ? 'Restoring files…' : `Restore ${job.status}`}</span>
+            <span className="tabular-nums text-slate-500 dark:text-slate-400">{job.restored_files} ok · {job.failed_files} failed · {formatBytes(job.bytes_written)}</span>
           </div>
           <ProgressBar value={job.percent} tone={finished ? (job.failed_files ? 'red' : 'green') : 'brand'} />
           {finished && job.status === 'completed' && (
@@ -1064,9 +1082,9 @@ function RestoreDialog({ scan, files, onClose }) {
             </Alert>
           )}
           {job.error && <Alert tone="danger">{job.error}</Alert>}
-          <div className="max-h-64 overflow-y-auto rounded-lg border border-slate-200">
+          <div className="max-h-64 overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-800">
             <table className="min-w-full text-xs">
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {job.items.slice(0, 200).map((it) => {
                   const f = files.find((x) => x.id === it.file_id);
                   return (

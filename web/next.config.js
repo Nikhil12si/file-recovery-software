@@ -15,7 +15,7 @@ module.exports = {
     ? { output: 'export', images: { unoptimized: true } }
     : {
       async rewrites() {
-        if (process.env.NEXT_PUBLIC_USE_MOCKS === 'true') return [];
+        if (process.env.NEXT_PUBLIC_USE_MOCKS !== 'false') return [];
         return [{ source: '/api/:path*', destination: `${BACKEND_URL}/api/:path*` }];
       },
     }),

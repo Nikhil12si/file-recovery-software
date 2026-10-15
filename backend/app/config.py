@@ -86,6 +86,11 @@ class Settings:
     # Hosted website(s) allowed to use this local agent: one origin per line in backend/web_origins.txt
     # (written by scripts/deploy-firebase.ps1, e.g. https://my-project.web.app). Only listed sites may call it.
     web_origins_file: Path = field(default_factory=lambda: Path(_path_env("WEB_ORIGINS_FILE", str(BACKEND_ROOT / "web_origins.txt"))))
+    # Twilio 2-Step SMS Verification
+    twilio_account_sid: str = field(default_factory=lambda: os.environ.get("TWILIO_ACCOUNT_SID", "").strip())
+    twilio_auth_token: str = field(default_factory=lambda: os.environ.get("TWILIO_AUTH_TOKEN", "").strip())
+    twilio_phone_number: str = field(default_factory=lambda: os.environ.get("TWILIO_PHONE_NUMBER", "").strip())
+    two_factor_enabled: bool = field(default_factory=lambda: os.environ.get("TWO_FACTOR_ENABLED", "true").lower() == "true")
 
     def __post_init__(self) -> None:
         self.data_dir.mkdir(parents=True, exist_ok=True)

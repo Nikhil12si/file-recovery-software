@@ -71,7 +71,7 @@ def new_id() -> str:
 SQLITE_SCHEMA = """
 PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS users (
-    id TEXT PRIMARY KEY, email TEXT NOT NULL, password_hash TEXT NOT NULL, full_name TEXT,
+    id TEXT PRIMARY KEY, email TEXT NOT NULL, password_hash TEXT NOT NULL, full_name TEXT, phone_number TEXT,
     role TEXT NOT NULL DEFAULT 'operator' CHECK (role IN ('admin','operator','viewer')),
     is_active INTEGER NOT NULL DEFAULT 1, failed_logins INTEGER NOT NULL DEFAULT 0, locked_until TEXT,
     created_at TEXT NOT NULL, updated_at TEXT NOT NULL, last_login_at TEXT);
@@ -243,6 +243,10 @@ class Database:
             assert self._sqlite is not None
             with self._lock:
                 self._sqlite.executescript(SQLITE_SCHEMA)
+                try:
+                    self._sqlite.execute("ALTER TABLE users ADD COLUMN phone_number TEXT")
+                except Exception:
+                    pass
             return
         exists = self.one("SELECT to_regclass('public.users') IS NOT NULL AS ok")
         if exists and exists.get("ok"):
@@ -310,12 +314,19 @@ class Repository:
         self.db = db
 
     # ------------------------------------------------------------------ users
-    def create_user(self, email: str, password_hash: str, full_name: Optional[str], role: str = "operator") -> dict:
+    def create_user(
+        self,
+        email: str,
+        password_hash: str,
+        full_name: Optional[str],
+        role: str = "operator",
+        phone_number: Optional[str] = None,
+    ) -> dict:
         uid, now = new_id(), utcnow()
         self.db.execute(
-            "INSERT INTO users (id, email, password_hash, full_name, role, is_active, failed_logins, created_at, updated_at) "
-            "VALUES (:id, :email, :ph, :fn, :role, :active, 0, :now, :now)",
-            {"id": uid, "email": email.strip(), "ph": password_hash, "fn": full_name, "role": role, "active": True, "now": now},
+            "INSERT INTO users (id, email, password_hash, full_name, phone_number, role, is_active, failed_logins, created_at, updated_at) "
+            "VALUES (:id, :email, :ph, :fn, :phone, :role, :active, 0, :now, :now)",
+            {"id": uid, "email": email.strip(), "ph": password_hash, "fn": full_name, "phone": phone_number, "role": role, "active": True, "now": now},
         )
         return self.get_user(uid)  # type: ignore[return-value]
 

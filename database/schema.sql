@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS users (
     email           TEXT        NOT NULL,
     password_hash   TEXT        NOT NULL,                    -- bcrypt, cost 12
     full_name       TEXT,
+    phone_number    TEXT,
     role            TEXT        NOT NULL DEFAULT 'operator'
                                 CHECK (role IN ('admin', 'operator', 'viewer')),
     is_active       BOOLEAN     NOT NULL DEFAULT TRUE,

@@ -7,8 +7,8 @@
  * lib/mockApi.js so the UI can be built and demoed without any backend.
  */
 import { mockApi } from './mockApi';
-
-const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
+// On hosted platforms like Vercel (or when running demo), default to mock mode unless explicitly set to 'false'
+const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS !== 'false';
 // '' => same origin, proxied by next.config.js (local `npm start`).
 // 'http://127.0.0.1:8000' => hosted build (Firebase): the browser talks to the Recovery Agent
 // (FastAPI backend + engine) running on the visitor's own PC, so scans and restores use their disks.
@@ -97,9 +97,14 @@ async function request(method, path, { body, query, form, raw } = {}) {
 const enc = encodeURIComponent;
 
 const realApi = {
-  // ---- auth (Module 1)
-  register: (email, password, fullName) => request('POST', '/api/auth/register', { body: { email, password, full_name: fullName || null } }),
-  login: (email, password) => request('POST', '/api/auth/login', { body: { email, password } }),
+  // ---- auth (Module 1 with 2FA)
+  register: (email, password, fullName, phoneNumber) =>
+    request('POST', '/api/auth/register', { body: { email, password, full_name: fullName || null, phone_number: phoneNumber || null } }),
+  login: (email, password, phoneNumber) =>
+    request('POST', '/api/auth/login', { body: { email, password, phone_number: phoneNumber || null } }),
+  verify2FA: (verificationId, code) => request('POST', '/api/auth/verify-2fa', { body: { verification_id: verificationId, code } }),
+  resend2FA: (verificationId, phoneNumber) =>
+    request('POST', '/api/auth/resend-2fa', { body: { verification_id: verificationId, phone_number: phoneNumber || null } }),
   logout: () => request('POST', '/api/auth/logout'),
   me: () => request('GET', '/api/auth/me'),
   // ---- system

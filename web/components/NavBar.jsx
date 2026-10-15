@@ -11,8 +11,7 @@ const LINKS = [
   { href: '/dashboard', label: 'Recover', icon: 'restore' },
   { href: '/history', label: 'History & Reports', icon: 'clock' },
   { href: '/manual', label: 'User Manual', icon: 'book' },
-  // Hosted build only: how to install the Recovery Agent on this PC.
-  ...(usesLocalAgent ? [{ href: '/agent', label: 'Agent setup', icon: 'shield' }] : []),
+  { href: '/agent', label: 'Windows Setup & ZIP', icon: 'download' },
 ];
 
 export default function NavBar() {

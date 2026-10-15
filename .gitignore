@@ -20,8 +20,7 @@ backend/.env
 # OS
 .DS_Store
 Thumbs.db
-# Firebase deployment (scripts/deploy-firebase.ps1)
-web/out/
-web/public/downloads/
+# Allow recovery agent zip download
+!web/public/downloads/recovery-agent.zip
 backend/web_origins.txt
 .firebase/

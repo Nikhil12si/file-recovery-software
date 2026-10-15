@@ -7,71 +7,101 @@ import Link from 'next/link';
 import { Icon, Alert, Badge, Spinner } from './ui';
 
 const AGENT_ZIP = '/downloads/recovery-agent.zip';
-const LOCAL_AGENT_URL = 'http://127.0.0.1:8000';
+const DEFAULT_AGENT_URL = 'http://127.0.0.1:8000';
 
 export default function AgentSetup() {
+  const [agentUrl, setAgentUrl] = useState(DEFAULT_AGENT_URL);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [testing, setTesting] = useState(false);
   const [status, setStatus] = useState({
     checked: false,
     connected: false,
+    activeUrl: DEFAULT_AGENT_URL,
     health: null,
     system: null,
     error: null,
   });
   const [copiedCmd, setCopiedCmd] = useState(null);
 
+  // Load saved agent URL on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = window.localStorage.getItem('frs_agent_url');
+      if (saved) {
+        setAgentUrl(saved);
+        testConnection(saved);
+        return;
+      }
+    }
+    testConnection(DEFAULT_AGENT_URL);
+  }, []);
+
   // Check connection to local Windows recovery agent
-  async function testConnection() {
+  async function testConnection(targetUrl = null) {
+    const primary = (targetUrl || agentUrl || DEFAULT_AGENT_URL).trim().replace(/\/+$/, '');
+    const candidates = [primary];
+    if (primary === 'http://127.0.0.1:8000') {
+      candidates.push('http://localhost:8000');
+    }
+
     setTesting(true);
     setStatus((prev) => ({ ...prev, checked: true, error: null }));
 
-    try {
-      // 1. Check health
-      const healthRes = await fetch(`${LOCAL_AGENT_URL}/api/health`, {
-        method: 'GET',
-        cache: 'no-store',
-      });
-      if (!healthRes.ok) throw new Error(`Agent returned HTTP ${healthRes.status}`);
-      const healthData = await healthRes.json();
+    let connected = false;
+    let lastErr = null;
 
-      // 2. Check system status & elevation
-      let systemData = null;
+    for (const url of candidates) {
       try {
-        const sysRes = await fetch(`${LOCAL_AGENT_URL}/api/system/status`, {
+        const healthRes = await fetch(`${url}/api/health`, {
           method: 'GET',
           cache: 'no-store',
+          headers: { Accept: 'application/json' },
         });
-        if (sysRes.ok) {
-          systemData = await sysRes.json();
-        }
-      } catch {
-        // Optional endpoint
-      }
+        if (!healthRes.ok) continue;
+        const healthData = await healthRes.json();
 
-      setStatus({
-        checked: true,
-        connected: true,
-        health: healthData,
-        system: systemData,
-        error: null,
-      });
-    } catch (err) {
+        let systemData = null;
+        try {
+          const sysRes = await fetch(`${url}/api/system/status`, {
+            method: 'GET',
+            cache: 'no-store',
+          });
+          if (sysRes.ok) systemData = await sysRes.json();
+        } catch { /* optional */ }
+
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem('frs_agent_url', url);
+        }
+
+        setStatus({
+          checked: true,
+          connected: true,
+          activeUrl: url,
+          health: healthData,
+          system: systemData,
+          error: null,
+        });
+        setAgentUrl(url);
+        connected = true;
+        break;
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+
+    if (!connected) {
       setStatus({
         checked: true,
         connected: false,
+        activeUrl: primary,
         health: null,
         system: null,
-        error: err.message || 'Cannot reach local agent at http://127.0.0.1:8000',
+        error: lastErr ? (lastErr.message || 'Cannot reach local agent') : 'No response from local agent',
       });
-    } finally {
-      setTesting(false);
     }
-  }
 
-  // Initial check on page load
-  useEffect(() => {
-    testConnection();
-  }, []);
+    setTesting(false);
+  }
 
   function copyToClipboard(text, id) {
     if (navigator?.clipboard) {
@@ -275,6 +305,31 @@ export default function AgentSetup() {
           </div>
         </div>
 
+        {/* Custom Address Input & Troubleshooting */}
+        <div className="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 flex-1">
+            <span className="font-medium text-slate-500 dark:text-slate-400 shrink-0">Agent Address:</span>
+            <input
+              type="text"
+              value={agentUrl}
+              onChange={(e) => setAgentUrl(e.target.value)}
+              placeholder="http://127.0.0.1:8000"
+              className="input py-1 px-2.5 text-xs font-mono max-w-sm flex-1 dark:bg-slate-800"
+            />
+            <button
+              type="button"
+              onClick={() => testConnection(agentUrl)}
+              disabled={testing}
+              className="btn-primary py-1 px-3 text-xs shrink-0"
+            >
+              {testing ? 'Testing...' : 'Connect'}
+            </button>
+          </div>
+          <span className="text-[11px] text-slate-500 dark:text-slate-400">
+            Default: <code className="font-mono">http://127.0.0.1:8000</code> or <code className="font-mono">http://localhost:8000</code>
+          </span>
+        </div>
+
         {/* Status Message / Guidance */}
         {status.connected ? (
           <div className="mt-4 rounded-xl bg-emerald-50/80 p-4 border border-emerald-200 text-xs text-emerald-900 dark:bg-emerald-950/40 dark:border-emerald-800/60 dark:text-emerald-200">
@@ -285,20 +340,31 @@ export default function AgentSetup() {
               Setup Complete! The Recovery Agent is connected and active.
             </div>
             <p className="mt-1 text-emerald-800 dark:text-emerald-300">
-              Your browser is actively communicating with the local engine on this PC. You can now perform quick scans, deep file carving, and restore deleted data with full hardware speeds.
+              Connected to <strong>{status.activeUrl}</strong>. Your browser is actively communicating with the local engine on this PC. You can now perform quick scans, deep file carving, and restore deleted data with full hardware speeds.
             </p>
           </div>
         ) : (
-          <div className="mt-4 rounded-xl bg-slate-100 p-4 border border-slate-200 text-xs text-slate-700 dark:bg-slate-800/70 dark:border-slate-700 dark:text-slate-300">
+          <div className="mt-4 rounded-xl bg-slate-100 p-4 border border-slate-200 text-xs text-slate-700 dark:bg-slate-800/70 dark:border-slate-700 dark:text-slate-300 space-y-2">
             <div className="flex items-center gap-2 font-semibold text-slate-900 dark:text-slate-100">
               <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Agent Not Detected Yet
+              Agent Not Detected at {status.activeUrl || DEFAULT_AGENT_URL}
             </div>
-            <p className="mt-1">
-              If you haven&apos;t started the agent yet, follow the installation steps below. If you already started <code className="font-mono text-xs">start-agent.bat</code>, please allow 10–20 seconds for the Python environment to boot up, then click <strong>&quot;Test Connection Now&quot;</strong>.
+            <p className="text-slate-600 dark:text-slate-300">
+              If the terminal is already running, here are the 3 common reasons for no detection:
             </p>
+            <ul className="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-300 text-[11.5px] pl-1">
+              <li>
+                <strong>Browser Local Network Permission:</strong> If visiting from a hosted site (HTTPS), your browser asks to connect to local devices. Click the <strong>lock / site settings icon</strong> next to the URL bar and ensure <em>&quot;Insecure content&quot;</em> or <em>&quot;Local network access&quot;</em> is set to <strong>Allow</strong>.
+              </li>
+              <li>
+                <strong>Check Terminal Status:</strong> Ensure the command prompt window remains open and shows: <code className="font-mono bg-slate-200 dark:bg-slate-900 px-1 py-0.5 rounded text-[11px]">Uvicorn running on http://127.0.0.1:8000</code>.
+              </li>
+              <li>
+                <strong>Ad-Blockers / Brave Shields:</strong> In Brave or extensions like uBlock, disable Shields for localhost connections or test by clicking the <strong>Connect</strong> button with <code className="font-mono">http://localhost:8000</code>.
+              </li>
+            </ul>
           </div>
         )}
       </div>

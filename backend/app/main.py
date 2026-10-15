@@ -62,15 +62,20 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title=settings.app_name, version=settings.version, lifespan=lifespan, docs_url="/api/docs",
               openapi_url="/api/openapi.json", redoc_url=None)
-app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_credentials=True, allow_methods=["*"],
-                   allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_origin_regex=r"^https?://.*$",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class PrivateNetworkAccess:
-    """The hosted website (e.g. https://<project>.web.app) talks to this agent on 127.0.0.1. Chromium asks first
-    with a preflight carrying `Access-Control-Request-Private-Network: true`. For origins listed in CORS_ORIGINS /
-    web_origins.txt only, answer `Access-Control-Allow-Private-Network: true`; every other origin is still refused
-    by the CORS middleware. Implemented as plain ASGI so it works with every Starlette version."""
+    """The hosted website (e.g. https://<project>.vercel.app or https://<project>.web.app) talks to this agent on 127.0.0.1.
+    Chromium asks first with a preflight carrying `Access-Control-Request-Private-Network: true`.
+    Answer `Access-Control-Allow-Private-Network: true` so the browser permits the request."""
 
     _REQ = b"access-control-request-private-network"
 
@@ -78,18 +83,32 @@ class PrivateNetworkAccess:
         self.app = app
         self.origins = {o.rstrip("/") for o in origins}
 
+    def _is_allowed(self, origin: str) -> bool:
+        if not origin or "*" in self.origins:
+            return True
+        if origin in self.origins:
+            return True
+        if any(h in origin.lower() for h in ("vercel.app", "localhost", "127.0.0.1", "web.app", "firebaseapp.com")):
+            return True
+        return False
+
     async def __call__(self, scope, receive, send) -> None:  # noqa: ANN001
         if scope["type"] != "http":
             return await self.app(scope, receive, send)
         headers = scope.get("headers") or []
         origin = next((v.decode("latin-1") for k, v in headers if k == b"origin"), "").rstrip("/")
-        if origin not in self.origins or not any(k == self._REQ for k, _ in headers):
+        if not self._is_allowed(origin) or not any(k == self._REQ for k, _ in headers):
             return await self.app(scope, receive, send)
         scope = dict(scope, headers=[(k, v) for k, v in headers if k != self._REQ])
 
         async def send_with_pna(message) -> None:  # noqa: ANN001
             if message["type"] == "http.response.start":
-                message = dict(message, headers=[*message.get("headers", []), (b"access-control-allow-private-network", b"true")])
+                msg_headers = list(message.get("headers", []))
+                msg_headers.append((b"access-control-allow-private-network", b"true"))
+                if origin:
+                    msg_headers.append((b"access-control-allow-origin", origin.encode("latin-1")))
+                    msg_headers.append((b"access-control-allow-credentials", b"true"))
+                message = dict(message, headers=msg_headers)
             await send(message)
 
         await self.app(scope, receive, send_with_pna)

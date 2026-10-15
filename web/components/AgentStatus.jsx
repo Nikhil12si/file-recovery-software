@@ -8,23 +8,21 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { api, usingMocks, usesLocalAgent } from '@/lib/api';
+import { checkAgentHealth, isLiveMode, setLiveMode, getAgentUrl } from '@/lib/api';
 import { Alert } from './ui';
 
 /** { state: 'checking' | 'connected' | 'missing', health } - re-checked every `intervalMs`. */
 export function useAgentStatus(intervalMs = 4000) {
   const [status, setStatus] = useState({ state: 'checking', health: null });
   useEffect(() => {
-    if (usingMocks) {
-      setStatus({ state: 'connected', health: null });
-      return undefined;
-    }
     let alive = true;
     let timer = null;
     const check = async () => {
       try {
-        const health = await api.health();
-        if (alive) setStatus({ state: 'connected', health });
+        const healthy = await checkAgentHealth();
+        if (alive) {
+          setStatus({ state: healthy ? 'connected' : 'missing', health: healthy ? { status: 'ok' } : null });
+        }
       } catch {
         if (alive) setStatus({ state: 'missing', health: null });
       }
@@ -39,17 +37,32 @@ export function useAgentStatus(intervalMs = 4000) {
   return status;
 }
 
-/** Shown under the navigation bar while the agent cannot be reached (hosted build only). */
+/** Shown under the navigation bar when live mode is active but agent cannot be reached. */
 export function AgentBanner() {
   const pathname = usePathname();
-  const { state } = useAgentStatus(5000);
-  if (!usesLocalAgent || state !== 'missing' || (pathname || '').startsWith('/agent')) return null;
+  const { state } = useAgentStatus(6000);
+  const [isLive, setIsLive] = useState(false);
+
+  useEffect(() => {
+    setIsLive(isLiveMode());
+    const handler = () => setIsLive(isLiveMode());
+    window.addEventListener('frs_mode_change', handler);
+    return () => window.removeEventListener('frs_mode_change', handler);
+  }, []);
+
+  if (!isLive || state !== 'missing' || (pathname || '').startsWith('/agent')) return null;
+
   return (
     <div className="mx-auto max-w-7xl px-4 pt-4">
-      <Alert tone="warning" title="Recovery Agent not detected on this computer">
-        This website scans and restores through a small program that runs on your own PC, so your disks never leave it.{' '}
-        <Link href="/agent" className="font-semibold underline">Set up the Recovery Agent</Link>
-        {' '}(about 5 minutes, once).
+      <Alert tone="warning" title="Windows Recovery Agent disconnected">
+        Cannot reach the recovery agent on this computer at {getAgentUrl()}. Please run <code className="font-mono text-xs">start-agent.bat</code> or{' '}
+        <button
+          type="button"
+          onClick={() => setLiveMode(false)}
+          className="font-semibold underline text-amber-900 dark:text-amber-200"
+        >
+          switch to Simulation Mode
+        </button>.
       </Alert>
     </div>
   );

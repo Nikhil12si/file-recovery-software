@@ -4,6 +4,7 @@
  */
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { setLiveMode } from '@/lib/api';
 import { Icon, Alert, Badge, Spinner } from './ui';
 
 const AGENT_ZIP = '/downloads/recovery-agent.zip';
@@ -72,6 +73,7 @@ export default function AgentSetup() {
         if (typeof window !== 'undefined') {
           window.localStorage.setItem('frs_agent_url', url);
         }
+        setLiveMode(true);
 
         setStatus({
           checked: true,
@@ -342,6 +344,14 @@ export default function AgentSetup() {
             <p className="mt-1 text-emerald-800 dark:text-emerald-300">
               Connected to <strong>{status.activeUrl}</strong>. Your browser is actively communicating with the local engine on this PC. You can now perform quick scans, deep file carving, and restore deleted data with full hardware speeds.
             </p>
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <Link href="/dashboard" className="btn-primary py-1.5 px-4 text-xs font-semibold">
+                Open Recovery Dashboard (Live Drives) →
+              </Link>
+              <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+                🟢 Live Engine Mode Active
+              </span>
+            </div>
           </div>
         ) : (
           <div className="mt-4 rounded-xl bg-slate-100 p-4 border border-slate-200 text-xs text-slate-700 dark:bg-slate-800/70 dark:border-slate-700 dark:text-slate-300 space-y-2">

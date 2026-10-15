@@ -7,12 +7,8 @@
  * lib/mockApi.js so the UI can be built and demoed without any backend.
  */
 import { mockApi } from './mockApi';
-// On hosted platforms like Vercel (or when running demo), default to mock mode unless explicitly set to 'false'
-const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS !== 'false';
-// '' => same origin, proxied by next.config.js (local `npm start`).
-// 'http://127.0.0.1:8000' => hosted build (Firebase): the browser talks to the Recovery Agent
-// (FastAPI backend + engine) running on the visitor's own PC, so scans and restores use their disks.
-const BASE = (process.env.NEXT_PUBLIC_API_BASE || '').replace(/\/+$/, '');
+
+const DEFAULT_AGENT_BASE = 'http://127.0.0.1:8000';
 const TOKEN_KEY = 'frs_token';
 const USER_KEY = 'frs_user';
 
@@ -23,6 +19,55 @@ export class ApiError extends Error {
     this.status = status;
     this.detail = detail;
     this.code = code;
+  }
+}
+
+// ----------------------------------------------------------------------------- dynamic mode & URL
+export function getAgentUrl() {
+  if (typeof window !== 'undefined') {
+    const stored = window.localStorage.getItem('frs_agent_url');
+    if (stored) return stored.trim().replace(/\/+$/, '');
+  }
+  const envBase = (process.env.NEXT_PUBLIC_API_BASE || '').trim().replace(/\/+$/, '');
+  if (envBase) return envBase;
+  return DEFAULT_AGENT_BASE;
+}
+
+export function isLiveMode() {
+  if (typeof window === 'undefined') {
+    return process.env.NEXT_PUBLIC_USE_MOCKS === 'false';
+  }
+  const mode = window.localStorage.getItem('frs_mode');
+  if (mode === 'live') return true;
+  if (mode === 'mock') return false;
+  if (process.env.NEXT_PUBLIC_USE_MOCKS === 'false') return true;
+  return false;
+}
+
+export function setLiveMode(live) {
+  if (typeof window === 'undefined') return;
+  const targetMode = live ? 'live' : 'mock';
+  window.localStorage.setItem('frs_mode', targetMode);
+  window.dispatchEvent(new CustomEvent('frs_mode_change', { detail: { mode: targetMode, live: Boolean(live) } }));
+}
+
+export async function checkAgentHealth(targetUrl = null) {
+  const base = (targetUrl || getAgentUrl() || DEFAULT_AGENT_BASE).trim().replace(/\/+$/, '');
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 2000);
+    const res = await fetch(`${base}/api/health`, {
+      method: 'GET',
+      signal: controller.signal,
+      cache: 'no-store',
+      headers: { Accept: 'application/json' },
+    });
+    clearTimeout(timeout);
+    if (!res.ok) return false;
+    const data = await res.json();
+    return data && data.status === 'ok';
+  } catch {
+    return false;
   }
 }
 
@@ -54,7 +99,18 @@ let unauthorizedHandler = null;
 export function onUnauthorized(fn) { unauthorizedHandler = fn; }
 
 async function request(method, path, { body, query, form, raw } = {}) {
-  const url = new URL(BASE + path, typeof window !== 'undefined' ? window.location.origin : 'http://localhost');
+  const base = getAgentUrl();
+  let urlStr;
+  if (/^https?:\/\//i.test(path)) {
+    urlStr = path;
+  } else {
+    const baseClean = (base || '').replace(/\/+$/, '');
+    const pathClean = path.startsWith('/') ? path : `/${path}`;
+    urlStr = baseClean
+      ? `${baseClean}${pathClean}`
+      : (typeof window !== 'undefined' ? `${window.location.origin}${pathClean}` : `http://localhost${pathClean}`);
+  }
+  const url = new URL(urlStr);
   if (query) {
     Object.entries(query).forEach(([k, v]) => {
       if (v === undefined || v === null || v === '' || (Array.isArray(v) && v.length === 0)) return;
@@ -74,9 +130,11 @@ async function request(method, path, { body, query, form, raw } = {}) {
   try {
     res = await fetch(url.toString(), { method, headers, body: payload, cache: 'no-store' });
   } catch (e) {
-    throw new ApiError(0, usesLocalAgent
-      ? 'Cannot reach the Recovery Agent on this computer. Start it (double-click start-agent.bat) - see the Agent setup page.'
-      : 'Cannot reach the recovery service. Is the backend running on port 8000?', 'NETWORK');
+    throw new ApiError(
+      0,
+      `Cannot reach Windows Recovery Agent at ${base}. Ensure start-agent.bat is running on your PC.`,
+      'NETWORK'
+    );
   }
   if (res.status === 401 && unauthorizedHandler && !path.startsWith('/api/auth/login')) unauthorizedHandler();
   if (!res.ok) {
@@ -158,8 +216,16 @@ const realApi = {
   },
 };
 
-export const api = USE_MOCKS ? mockApi : realApi;
-export const usingMocks = USE_MOCKS;
-/** True for the hosted (Firebase) build, where every visitor runs their own local Recovery Agent. */
-export const usesLocalAgent = !USE_MOCKS && /^https?:\/\//i.test(BASE);
-export const agentAddress = BASE;
+// Dynamic proxy that routes calls to realApi when in Live Mode and mockApi when in Mock Mode
+export const api = new Proxy({}, {
+  get(target, prop) {
+    const live = isLiveMode();
+    const activeApi = live ? realApi : mockApi;
+    const fn = activeApi[prop] || mockApi[prop];
+    return typeof fn === 'function' ? fn.bind(activeApi) : fn;
+  }
+});
+
+export const usingMocks = false;
+export const usesLocalAgent = true;
+export const agentAddress = DEFAULT_AGENT_BASE;

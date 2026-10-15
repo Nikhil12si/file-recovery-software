@@ -19,7 +19,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { api } from '@/lib/api';
+import { api, isLiveMode, setLiveMode, getAgentUrl } from '@/lib/api';
 import {
   Alert, Badge, ConfidenceBadge, EmptyState, Icon, Modal, ProgressBar, Spinner, StatCard,
   classNames, formatBytes, formatDate, formatDuration,
@@ -63,10 +63,22 @@ export default function RecoveryDashboard() {
   const router = useRouter();
   const [system, setSystem] = useState(null);
   const [scanId, setScanId] = useState(params.get('scan'));
+  const [live, setLive] = useState(false);
 
   useEffect(() => {
-    api.systemStatus().then(setSystem).catch(() => setSystem(null));
+    const update = () => {
+      setLive(isLiveMode());
+      api.systemStatus().then(setSystem).catch(() => setSystem(null));
+    };
+    update();
+    window.addEventListener('frs_mode_change', update);
+    window.addEventListener('storage', update);
+    return () => {
+      window.removeEventListener('frs_mode_change', update);
+      window.removeEventListener('storage', update);
+    };
   }, []);
+
   useEffect(() => {
     setScanId(params.get('scan'));
   }, [params]);
@@ -85,6 +97,47 @@ export default function RecoveryDashboard() {
         </div>
         {scanId && <button type="button" className="btn-secondary" onClick={() => openScan(null)}><Icon name="search" /> New scan</button>}
       </div>
+
+      {/* Engine Status & Switcher Banner */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-slate-50/80 px-4 py-2.5 text-xs dark:border-slate-800 dark:bg-slate-900/70 shadow-sm">
+        <div className="flex items-center gap-2">
+          {live ? (
+            <>
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+              </span>
+              <span className="font-bold text-emerald-800 dark:text-emerald-300">Live Windows Engine Mode</span>
+              <span className="text-slate-600 dark:text-slate-400">• Scanning real drives on this PC via agent ({getAgentUrl()})</span>
+            </>
+          ) : (
+            <>
+              <span className="h-2.5 w-2.5 rounded-full bg-amber-500"></span>
+              <span className="font-bold text-amber-800 dark:text-amber-300">Simulation (Mock) Mode</span>
+              <span className="text-slate-600 dark:text-slate-400">• Displaying simulated demo disks and files</span>
+            </>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {live ? (
+            <button
+              type="button"
+              onClick={() => setLiveMode(false)}
+              className="text-xs font-medium text-slate-600 hover:text-slate-900 underline dark:text-slate-400 dark:hover:text-slate-200"
+            >
+              Switch to Simulation
+            </button>
+          ) : (
+            <Link
+              href="/agent"
+              className="font-semibold text-brand-600 hover:text-brand-700 underline dark:text-indigo-400"
+            >
+              Connect Windows Recovery Agent →
+            </Link>
+          )}
+        </div>
+      </div>
+
       <SystemBanner system={system} />
       {scanId ? <ScanWorkspace key={scanId} scanId={scanId} onNewScan={() => openScan(null)} />
         : <ScanWizard system={system} onStarted={(s) => openScan(s.id)} />}
@@ -153,6 +206,12 @@ function ScanWizard({ system, onStarted }) {
     api.drives(refresh).then(setDrives).catch((e) => setDrivesError(e.message));
   }, []);
   useEffect(() => loadDrives(false), [loadDrives]);
+
+  useEffect(() => {
+    const handler = () => loadDrives(true);
+    window.addEventListener('frs_mode_change', handler);
+    return () => window.removeEventListener('frs_mode_change', handler);
+  }, [loadDrives]);
 
   const pickScenario = (id) => {
     setScenario(id);
